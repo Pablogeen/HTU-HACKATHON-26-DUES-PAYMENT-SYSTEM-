@@ -1,0 +1,27 @@
+
+
+BBBBBBBBBBBBBBBBB                                                          BBBBBBBBBBBBBBBBB
+B::::::::::::::::B                                                         B::::::::::::::::B
+B::::::BBBBBB:::::B                                                        B::::::BBBBBB:::::B
+BB:::::B     B:::::B                                                       BB:::::B     B:::::B
+  B::::B     B:::::B   ooooooooooo yyyyyyy           yyyyyyy  ssssssssss     B::::B     B:::::B   ooooooooooo yyyyyyy           yyyyyyy  ssssssssss
+  B::::B     B:::::B oo:::::::::::ooy:::::y         y:::::y ss::::::::::s    B::::B     B:::::B oo:::::::::::ooy:::::y         y:::::y ss::::::::::s
+  B::::BBBBBB:::::B o:::::::::::::::oy:::::y       y:::::yss:::::::::::::s   B::::BBBBBB:::::B o:::::::::::::::oy:::::y       y:::::yss:::::::::::::s
+  B:::::::::::::BB  o:::::ooooo:::::o y:::::y     y:::::y s::::::ssss:::::s  B:::::::::::::BB  o:::::ooooo:::::o y:::::y     y:::::y s::::::ssss:::::s
+  B::::BBBBBB:::::B o::::o     o::::o  y:::::y   y:::::y   s:::::s  ssssss   B::::BBBBBB:::::B o::::o     o::::o  y:::::y   y:::::y   s:::::s  ssssss
+  B::::B     B:::::Bo::::o     o::::o   y:::::y y:::::y      s::::::s        B::::B     B:::::Bo::::o     o::::o   y:::::y y:::::y      s::::::s
+  B::::B     B:::::Bo::::o     o::::o    y:::::y:::::y          s::::::s     B::::B     B:::::Bo::::o     o::::o    y:::::y:::::y          s::::::s
+  B::::B     B:::::Bo::::o     o::::o     y:::::::::y     ssssss   s:::::s   B::::B     B:::::Bo::::o     o::::o     y:::::::::y     ssssss   s:::::s
+BB:::::BBBBBB::::::Bo:::::ooooo:::::o      y:::::::y      s:::::ssss::::::sBB:::::BBBBBB::::::Bo:::::ooooo:::::o      y:::::::y      s:::::ssss::::::s
+B:::::::::::::::::B o:::::::::::::::o       y:::::y       s::::::::::::::s B:::::::::::::::::B o:::::::::::::::o       y:::::y       s::::::::::::::s
+B::::::::::::::::B   oo:::::::::::oo       y:::::y         s:::::::::::ss  B::::::::::::::::B   oo:::::::::::oo       y:::::y         s:::::::::::ss
+BBBBBBBBBBBBBBBBB      ooooooooooo        y:::::y           sssssssssss    BBBBBBBBBBBBBBBBB      ooooooooooo        y:::::y           sssssssssss
+                                         y:::::y                                                                    y:::::y
+                                        y:::::y                                                                    y:::::y
+                                       y:::::y                                                                    y:::::y
+                                      y:::::y                                                                    y:::::y
+                                     yyyyyyy                                                                    yyyyyyy
+
+
+${application.title} ${application.version}
+Powered by Spring Boot ${spring-boot.version}
