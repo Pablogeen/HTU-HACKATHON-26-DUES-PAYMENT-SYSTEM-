@@ -1,0 +1,18 @@
+package com.boyboys.dues_payment_system.users.domain.dto;
+
+import com.boyboys.dues_payment_system.users.Qualification;
+import com.boyboys.dues_payment_system.users.Role;
+import lombok.Data;
+
+@Data
+public class UserResponse {
+
+        private String firstName;
+        private String lastName;
+        private String middleName;
+        private String email;
+        private String phoneNumber;
+        private Integer level;
+        private Qualification qualification;
+        private Role role;
+}
