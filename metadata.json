@@ -1,0 +1,6 @@
+{
+  "name": "DuesFlow",
+  "description": "Secure university financial operations platform for departmental dues collection, automated payments, auditing, and QR event entrance verification.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,25 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/duesflow
+    username: postgres
+    password: db-secure-password
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+application:
+  security:
+    jwt:
+      secret-key: dXNlY29uZmVyZW5jZWNyZWRlbnRpaWFsc2VjdXJlX2tleV9kZXNzaWduX3NlY3VyZV9jb2RlXzIwMjZfZHVlc2Zsb3c=
+      expiration: 86400000 
