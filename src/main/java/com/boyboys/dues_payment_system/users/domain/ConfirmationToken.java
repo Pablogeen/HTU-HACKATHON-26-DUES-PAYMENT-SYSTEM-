@@ -1,7 +1,7 @@
 package com.boyboys.dues_payment_system.users.domain;
 
 
-import com.boyboys.dues_payment_system.users.User;
+import com.boyboys.dues_payment_system.users.Student;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,9 +25,9 @@ public class ConfirmationToken {
     private LocalDateTime confirmedAt;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    private Student user;
 
-    public ConfirmationToken(String token, LocalDateTime created, LocalDateTime expires, User user){
+    public ConfirmationToken(String token, LocalDateTime created, LocalDateTime expires, Student user){
         this.token = token;
         this.created= created;
         this.expires=expires;

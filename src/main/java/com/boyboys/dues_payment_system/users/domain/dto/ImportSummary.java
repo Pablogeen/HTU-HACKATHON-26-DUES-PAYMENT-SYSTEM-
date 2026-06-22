@@ -1,7 +1,10 @@
 package com.boyboys.dues_payment_system.users.domain.dto;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
 public class ImportSummary {
 
     private int totalRows;

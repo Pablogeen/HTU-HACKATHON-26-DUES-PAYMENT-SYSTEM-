@@ -5,7 +5,7 @@ import com.boyboys.dues_payment_system.users.Role;
 import lombok.Data;
 
 @Data
-public class UserResponse {
+public class StudentResponse {
 
         private String firstName;
         private String lastName;
