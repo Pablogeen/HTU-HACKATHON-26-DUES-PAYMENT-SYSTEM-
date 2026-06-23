@@ -14,5 +14,4 @@ public class StudentResponse {
         private String phoneNumber;
         private Integer level;
         private Qualification qualification;
-        private Role role;
 }
