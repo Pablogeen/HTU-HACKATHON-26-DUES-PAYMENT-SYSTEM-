@@ -1,6 +1,8 @@
 package com.boyboys.dues_payment_system.users.domain.service;
 
+import com.boyboys.dues_payment_system.users.Role;
 import com.boyboys.dues_payment_system.users.Student;
+import com.boyboys.dues_payment_system.users.domain.PaymentStatus;
 import com.boyboys.dues_payment_system.users.domain.StudentRepository;
 import com.boyboys.dues_payment_system.users.domain.dto.CsvParseResult;
 import com.boyboys.dues_payment_system.users.domain.dto.ImportSummary;
@@ -9,6 +11,7 @@ import com.boyboys.dues_payment_system.users.domain.dto.StudentResponse;
 import com.boyboys.dues_payment_system.users.domain.exception.StudentNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -19,9 +22,10 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StudentService {
 
-    private final StudentRepository userRepository;
+    private final StudentRepository studentRepository;
     private final StudentCsvParser studentCsvParser;
     private final ModelMapper modelMapper;
 
@@ -34,13 +38,13 @@ public class StudentService {
         int skippedCount = parseResult.getSkippedReasons().size();
         List<String> skippedReasons = new ArrayList<>(parseResult.getSkippedReasons());
 
-        for (Student user : parseResult.getValidUsers()) {
-            if (userRepository.existsByEmail((user.getEmail()))) {
+        for (Student student : parseResult.getValidUsers()) {
+            if (studentRepository.existsByEmail((student.getEmail()))) {
                 skippedCount++;
-                skippedReasons.add("Skipped: Email already exists - " + user.getEmail());
+                skippedReasons.add("Skipped: Email already exists - " + student.getEmail());
                 continue;
             }
-            userRepository.save(user);
+            studentRepository.save(student);
             successCount++;
         }
 
@@ -53,37 +57,81 @@ public class StudentService {
         return summary;
     }
 
-    public List<StudentResponse> getAllUsers(Pageable pageable) {
-        return userRepository.findAll(pageable).stream()
+    public List<StudentResponse> getAllStudents(Pageable pageable) {
+        return studentRepository.findAll(pageable).stream()
                 .map(user -> modelMapper.map(user, StudentResponse.class))
                 .toList();
     }
 
-    public StudentResponse getUserById(Long id) {
-        Student user = userRepository.findById(id)
-                .orElseThrow(() -> new StudentNotFoundException("User not found"));
-        return modelMapper.map(user, StudentResponse.class);
+    public StudentResponse getStudentById(Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+        log.info("Got student from db");
+        return modelMapper.map(student, StudentResponse.class);
     }
 
     @Transactional
-    public StudentResponse updateUser(Long id, UpdateStudentRequest request) {
-        Student user = userRepository.findById(id)
-                .orElseThrow(() -> new StudentNotFoundException("User not found"));
-        modelMapper.map(request, user);
-        userRepository.save(user);
-        return modelMapper.map(user, StudentResponse.class);
+    public StudentResponse updateStudent(Long id, UpdateStudentRequest request) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+   Student mappedStudent = modelMapper.map(request, Student.class);
+        studentRepository.save(mappedStudent);
+        log.info("Student details updated");
+        return modelMapper.map(student, StudentResponse.class);
     }
 
     @Transactional
-    public void deleteUser(Long id) {
-        Student user = userRepository.findById(id)
-                .orElseThrow(() -> new StudentNotFoundException("User not found"));
-        userRepository.delete(user);
+    public void deleteStudent(Long id) {
+        Student user = studentRepository.findById(id)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+        studentRepository.delete(user);
     }
 
     public StudentResponse getMe(String email) {
-        Student user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new StudentNotFoundException("User not found"));
+        Student user = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
         return modelMapper.map(user, StudentResponse.class);
+    }
+
+    @Transactional
+    public StudentResponse assignRole(String email) {
+        log.info("About to assign role to: {}",email);
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+        log.info("Student gotten from the db");
+        student.setRole(Role.FINANCIAL_SECRETARY);
+        Student savedStudent = studentRepository.save(student);
+        log.info("New role assigned");
+        return modelMapper.map(savedStudent, StudentResponse.class);
+
+    }
+
+    @Transactional
+    public StudentResponse revokeRole(String email) {
+        log.info("About to revoke role of: {}",email);
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+        log.info("Student info gotten from the db");
+        student.setRole(Role.STUDENT);
+        Student savedStudent = studentRepository.save(student);
+        log.info("Role Revoked");
+        return modelMapper.map(savedStudent, StudentResponse.class);
+    }
+
+    @Transactional
+    public StudentResponse getStudentByEmail(String email) {
+        Student student = studentRepository.findByEmail(email)
+                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+        log.info("Student found in the db");
+        return modelMapper.map(student, StudentResponse.class);
+
+    }
+
+    @Transactional
+    public List<StudentResponse> getStudentsByPaymentStatus(PaymentStatus paymentStatus, Pageable pageable) {
+        return studentRepository.findByPaymentStatus(paymentStatus, pageable)
+                .stream()
+                .map(student -> modelMapper.map(student, StudentResponse.class))
+                .toList();
     }
 }

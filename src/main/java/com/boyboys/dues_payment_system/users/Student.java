@@ -1,5 +1,6 @@
 package com.boyboys.dues_payment_system.users;
 
+import com.boyboys.dues_payment_system.users.domain.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +31,8 @@ public class Student {
     private Qualification qualificationType;
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
 
 

@@ -3,11 +3,9 @@ package com.boyboys.dues_payment_system.users.domain.service;
 import com.boyboys.dues_payment_system.users.Student;
 import com.boyboys.dues_payment_system.users.domain.ConfirmationToken;
 import com.boyboys.dues_payment_system.users.domain.ConfirmationTokenRepository;
+import com.boyboys.dues_payment_system.users.domain.PaymentStatus;
 import com.boyboys.dues_payment_system.users.domain.StudentRepository;
-import com.boyboys.dues_payment_system.users.domain.dto.ConfirmationTokenRequest;
-import com.boyboys.dues_payment_system.users.domain.dto.LoginRequest;
-import com.boyboys.dues_payment_system.users.domain.dto.LoginResponse;
-import com.boyboys.dues_payment_system.users.domain.dto.StudentResponse;
+import com.boyboys.dues_payment_system.users.domain.dto.*;
 import com.boyboys.dues_payment_system.users.domain.exception.*;
 import com.boyboys.dues_payment_system.users.domain.security.JwtHelper;
 import jakarta.transaction.Transactional;
@@ -106,10 +104,11 @@ public class AuthService {
 
     }
 
-    public StudentResponse registerStudent(@Valid ConfirmationTokenRequest request) {
+    public StudentResponse registerStudent(@Valid RegisterRequest request) {
             log.info("Request made to register student");
             Student student = modelMapper.map(request, Student.class);
             log.info("Student request mapped to the student entity");
+            student.setPaymentStatus(PaymentStatus.UNPAID);
             Student savedStudent = studentRepository.save(student);
             log.info("Student saved into the db");
             StudentResponse studentResponse= modelMapper.map(savedStudent, StudentResponse.class);

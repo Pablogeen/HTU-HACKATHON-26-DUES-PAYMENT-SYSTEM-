@@ -3,6 +3,7 @@ package com.boyboys.dues_payment_system.users.domain.service;
 
 import com.boyboys.dues_payment_system.users.Role;
 import com.boyboys.dues_payment_system.users.Student;
+import com.boyboys.dues_payment_system.users.domain.PaymentStatus;
 import com.boyboys.dues_payment_system.users.domain.dto.CsvParseResult;
 import com.boyboys.dues_payment_system.users.domain.exception.InvalidFileException;
 import org.springframework.stereotype.Component;
@@ -117,6 +118,7 @@ public class StudentCsvParser {
                 user.setPhoneNumber(phoneNumber);
                 user.setLevel(level);
                 user.setRole(Role.STUDENT);
+                user.setPaymentStatus(PaymentStatus.UNPAID);
 
                 validUsers.add(user);
             }

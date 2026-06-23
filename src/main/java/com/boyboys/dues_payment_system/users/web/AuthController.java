@@ -1,9 +1,6 @@
 package com.boyboys.dues_payment_system.users.web;
 
-import com.boyboys.dues_payment_system.users.domain.dto.ConfirmationTokenRequest;
-import com.boyboys.dues_payment_system.users.domain.dto.LoginRequest;
-import com.boyboys.dues_payment_system.users.domain.dto.LoginResponse;
-import com.boyboys.dues_payment_system.users.domain.dto.StudentResponse;
+import com.boyboys.dues_payment_system.users.domain.dto.*;
 import com.boyboys.dues_payment_system.users.domain.service.AuthService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -13,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,7 +38,8 @@ public class AuthController {
     }
 
     @PostMapping("/register-student")
-    public ResponseEntity<StudentResponse> registerStudent(@RequestBody @Valid ConfirmationTokenRequest request) {
+    @PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN')")
+    public ResponseEntity<StudentResponse> registerStudent(@RequestBody @Valid RegisterRequest request) {
         log.info("Request made to register a single student to the system : {}",request.getEmail());
         StudentResponse response = authService.registerStudent(request);
         log.info("Student has been registered to the system");

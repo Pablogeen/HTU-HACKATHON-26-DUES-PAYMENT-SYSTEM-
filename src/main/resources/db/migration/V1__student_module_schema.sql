@@ -6,6 +6,7 @@ CREATE TABLE student (
                       email VARCHAR(100) NOT NULL UNIQUE,
                       phone_number VARCHAR(10) NOT NULL UNIQUE,
                       qualification_type ENUM('BTECH','HND') NOT NULL,
+                      payment_status ENUM('PAID','UNPAID') NOT NULL,
                       level INT NOT NULL,
                       role ENUM('STUDENT', 'FINANCIAL_SECRETARY', 'PRESIDENT') NOT NULL
 );
