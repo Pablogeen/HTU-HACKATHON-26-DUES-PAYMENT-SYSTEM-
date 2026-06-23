@@ -4,10 +4,10 @@ CREATE TABLE student (
                       last_name VARCHAR(100) NOT NULL,
                       middle_name VARCHAR(100),
                       email VARCHAR(100) NOT NULL UNIQUE,
-                      phone_number VARCHAR(10) NOT NULL UNIQUE,
+                      phone_number VARCHAR(20) NOT NULL UNIQUE,
                       qualification_type ENUM('BTECH','HND') NOT NULL,
                       payment_status ENUM('PAID','UNPAID') NOT NULL,
-                      level INT NOT NULL,
+                      level ENUM('L100','L200','L300','L400') NOT NULL,
                       role ENUM('STUDENT', 'FINANCIAL_SECRETARY', 'PRESIDENT') NOT NULL
 );
 

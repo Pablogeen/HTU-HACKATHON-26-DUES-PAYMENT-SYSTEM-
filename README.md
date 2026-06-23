@@ -10,7 +10,7 @@ to generate reports
 
 # MODULES
 
-* ***USER MODULE***
+* ***STUDENT MODULE***
 
 This module manages the details of the students which are eligible to make payments. Staff and Financial Secretary also within this module which they can manage all students within the system.
 
@@ -28,8 +28,8 @@ This module handles events published by other modules and send notifications to 
 
 
 # Module Communication
-* The **User Module** publishes an event ***[UserLoginEvent]*** to the notification module after login.
-* **Notification Module** consumes ***[UserLoginEvent}*** to fire a One Time Password(OTP) notification to the user/student to be authenticated to the system
+* The **Student Module** publishes an event ***[StudentLoginEvent]*** to the notification module after login.
+* **Notification Module** consumes ***[StudentLoginEvent}*** to fire a One Time Password(OTP) notification to the user/student to be authenticated to the system
 * After payment is being done by the user/student, **Payment Module** publishes an event ***[PaymentSucceededEvent]***
 * **Receipts && Financial Reports Module** will consume ***[PaymentSucceededEvent]*** to generate receipts for the user/student.
 * **Notification Module** consumes ***[PaymentSucceededEvent]*** to send a notification for payment succeeded to the user/student.

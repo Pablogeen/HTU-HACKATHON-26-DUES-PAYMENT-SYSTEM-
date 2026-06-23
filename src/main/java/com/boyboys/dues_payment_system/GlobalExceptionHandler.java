@@ -1,6 +1,6 @@
 package com.boyboys.dues_payment_system;
 
-import com.boyboys.dues_payment_system.users.domain.exception.*;
+import com.boyboys.dues_payment_system.student.domain.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,8 +52,20 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(details, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(PhoneNumberAlreadyTakenException.class)
+    public ResponseEntity<?> phoneNumberAlreadyExistException(PhoneNumberAlreadyTakenException e, WebRequest request) {
+        log.error("Phone Number already exists");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "PHONE NUMBER ALREADY TAKEN",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+    }
+
+
     @ExceptionHandler(StudentNotFoundException.class)
-    public ResponseEntity<?> userNotFoundException(StudentNotFoundException e, WebRequest request) {
+    public ResponseEntity<?> studentNotFoundException(StudentNotFoundException e, WebRequest request) {
         log.error("User not found exception");
         ErrorDetails details = new ErrorDetails(
                 e.getMessage(),
@@ -62,21 +74,6 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);
     }
-
-//    @ExceptionHandler(AccountNotVerifiedException.class)
-//    public ResponseEntity<?> accountNotVerifiedException(AccountNotVerifiedException e, WebRequest request) {
-//        log.error("Account not verified exception");
-//        ErrorDetails details = new ErrorDetails(
-//                e.getMessage(),
-//                "ACCOUNT NOT VERIFIED. PLEASE VERIFY YOUR EMAIL",
-//                request.getDescription(false),
-//                LocalDateTime.now());
-//        return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
-//    }
-
-
-
-  //  }
 
 
 //    @ExceptionHandler(AccessDeniedException.class)
