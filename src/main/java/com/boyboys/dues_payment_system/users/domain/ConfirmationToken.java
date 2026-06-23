@@ -20,17 +20,17 @@ public class ConfirmationToken {
     private Long id;
     @Column(name = "token", nullable = false, length = 6)
     private String token;
-    private LocalDateTime created;
-    private LocalDateTime expires;
+    private LocalDateTime createdAt;
+    private LocalDateTime expiresAt;
     private LocalDateTime confirmedAt;
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private Student user;
+    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    private Student student;
 
-    public ConfirmationToken(String token, LocalDateTime created, LocalDateTime expires, Student user){
+    public ConfirmationToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, Student student){
         this.token = token;
-        this.created= created;
-        this.expires=expires;
-        this.user=user;
+        this.createdAt= createdAt;
+        this.expiresAt=expiresAt;
+        this.student=student;
     }
 }

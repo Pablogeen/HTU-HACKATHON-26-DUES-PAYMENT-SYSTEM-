@@ -1,16 +1,14 @@
 package com.boyboys.dues_payment_system.users;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Student {
 
     @Id
@@ -29,7 +27,7 @@ public class Student {
     @Column(name = "level", length = 3)
     private Integer level;
     @Enumerated(EnumType.STRING)
-    private Qualification QualificationType;
+    private Qualification qualificationType;
     @Enumerated(EnumType.STRING)
     private Role role;
 

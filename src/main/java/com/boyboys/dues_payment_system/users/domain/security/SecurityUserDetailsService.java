@@ -13,15 +13,22 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class SecurityUserDetailsService implements UserDetailsService {
 
-    private final StudentRepository userRepo;
+    private final StudentRepository studentRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Student user = userRepo.findByEmail(email)
+        Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("STUDENT NOT FOUND"));
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .roles(user.getRole().name())
+        return (UserDetails) Student.builder()
+                .id(student.getId())
+                .firstName(student.getFirstName())
+                .lastName(student.getLastName())
+                .middleName(student.getMiddleName())
+                .email(student.getEmail())
+                .phoneNumber(student.getPhoneNumber())
+                .level(student.getLevel())
+                .qualificationType(student.getQualificationType())
+                .role(student.getRole())
                 .build();
     }
 }

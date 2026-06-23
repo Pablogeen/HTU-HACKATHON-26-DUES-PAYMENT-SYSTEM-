@@ -19,9 +19,8 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
     @Query(value = "UPDATE confirmation_token SET confirmed_at = :confirmedAt WHERE token = :token", nativeQuery = true)
     int updateConfirmationDetails(@Param("token") String token, @Param("confirmedAt") LocalDateTime confirmedAt);
 
-    Optional<Object> findActiveTokenByUserId(Long id);
 
-    @Query("SELECT ct FROM ConfirmationToken ct WHERE ct.user.id = :userId AND ct.confirmedAt IS NULL AND ct.expires > :now")
-    Optional<ConfirmationToken> findActiveTokenByUserId(@Param("userId") Long userId, @Param("now") LocalDateTime now);
+    @Query("SELECT ct FROM ConfirmationToken ct WHERE ct.student.id = :studentId AND ct.confirmedAt IS NULL AND ct.expiresAt > :now")
+    Optional<ConfirmationToken> findActiveTokenByStudentId(@Param("studentId") Long studentId, @Param("now") LocalDateTime now);
 }
 

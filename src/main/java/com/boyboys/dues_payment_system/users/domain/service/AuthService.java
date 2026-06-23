@@ -31,18 +31,18 @@ public class AuthService {
 
 
         public String login(LoginRequest request) {
-            Student user = studentRepository.findByEmail(request.getEmail())
+            Student student = studentRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new StudentNotFoundException("No account found with this email"));
             log.info("Gotten the user from the db");
 
-            confirmationTokenRepository.findActiveTokenByUserId(user.getId(), LocalDateTime.now())
+            confirmationTokenRepository.findActiveTokenByStudentId(student.getId(), LocalDateTime.now())
                     .ifPresent(existing -> {
                         existing.setConfirmedAt(LocalDateTime.now());
                         confirmationTokenRepository.save(existing);
                         log.info("Found unconfirmed token and confirming it.");
                     });
 
-            String token = tokenHelper.saveConfirmationToken(user);
+            String token = tokenHelper.saveConfirmationToken(student);
             log.info("Token has been saved");
 
             //Event will be published to send email
@@ -64,7 +64,7 @@ public class AuthService {
                 throw new TokenAlreadyConfirmedException("TOKEN ALREADY CONFIRMED");
             }
 
-            if(confirmationToken.getExpires().isBefore(LocalDateTime.now())){
+            if(confirmationToken.getExpiresAt().isBefore(LocalDateTime.now())){
                 log.error("Token expired");
                 throw new TokenExpiredException("TOKEN EXPIRED");
             }
@@ -85,7 +85,7 @@ public class AuthService {
         Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("STUDENT NOT FOUND"));
 
-        confirmationTokenRepository.findActiveTokenByUserId(student.getId(), LocalDateTime.now())
+        confirmationTokenRepository.findActiveTokenByStudentId(student.getId(), LocalDateTime.now())
                 .ifPresent(existing -> {
                     existing.setConfirmedAt(LocalDateTime.now());
                     confirmationTokenRepository.save(existing);

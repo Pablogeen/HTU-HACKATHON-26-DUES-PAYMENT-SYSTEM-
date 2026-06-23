@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("api/v1/auth/login", "api/v1/auth/verify",
-                        "api/v1/auth/resend-verification", "/users/contact",
+                        "api/v1/auth/resend-verification",
                         "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html")
                 .permitAll().anyRequest().authenticated());
          http.exceptionHandling(ex -> ex
