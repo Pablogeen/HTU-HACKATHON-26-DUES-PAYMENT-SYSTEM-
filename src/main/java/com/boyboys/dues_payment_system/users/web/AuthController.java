@@ -3,6 +3,7 @@ package com.boyboys.dues_payment_system.users.web;
 import com.boyboys.dues_payment_system.users.domain.dto.ConfirmationTokenRequest;
 import com.boyboys.dues_payment_system.users.domain.dto.LoginRequest;
 import com.boyboys.dues_payment_system.users.domain.dto.LoginResponse;
+import com.boyboys.dues_payment_system.users.domain.dto.StudentResponse;
 import com.boyboys.dues_payment_system.users.domain.service.AuthService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -35,6 +36,14 @@ public class AuthController {
         log.info("Request made to verify email for login access");
         LoginResponse response = authService.verify(request);
         log.info("Token has been verified successfully");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/register-student")
+    public ResponseEntity<StudentResponse> registerStudent(@RequestBody @Valid ConfirmationTokenRequest request) {
+        log.info("Request made to register a single student to the system : {}",request.getEmail());
+        StudentResponse response = authService.registerStudent(request);
+        log.info("Student has been registered to the system");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

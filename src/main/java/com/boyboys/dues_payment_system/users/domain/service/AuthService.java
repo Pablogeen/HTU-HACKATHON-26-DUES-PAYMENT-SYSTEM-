@@ -7,11 +7,14 @@ import com.boyboys.dues_payment_system.users.domain.StudentRepository;
 import com.boyboys.dues_payment_system.users.domain.dto.ConfirmationTokenRequest;
 import com.boyboys.dues_payment_system.users.domain.dto.LoginRequest;
 import com.boyboys.dues_payment_system.users.domain.dto.LoginResponse;
+import com.boyboys.dues_payment_system.users.domain.dto.StudentResponse;
 import com.boyboys.dues_payment_system.users.domain.exception.*;
 import com.boyboys.dues_payment_system.users.domain.security.JwtHelper;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,7 @@ public class AuthService {
         private final JwtHelper jwtHelper;
         private final ConfirmationTokenHelper tokenHelper;
         private final ConfirmationTokenService tokenService;
+        private final ModelMapper modelMapper;
 
 
         public String login(LoginRequest request) {
@@ -100,5 +104,15 @@ public class AuthService {
 
         return "Email Sent";
 
+    }
+
+    public StudentResponse registerStudent(@Valid ConfirmationTokenRequest request) {
+            log.info("Request made to register student");
+            Student student = modelMapper.map(request, Student.class);
+            log.info("Student request mapped to the student entity");
+            Student savedStudent = studentRepository.save(student);
+            log.info("Student saved into the db");
+            StudentResponse studentResponse= modelMapper.map(savedStudent, StudentResponse.class);
+            return studentResponse;
     }
 }
