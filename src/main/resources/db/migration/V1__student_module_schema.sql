@@ -7,11 +7,11 @@ CREATE TABLE student (
                       phone_number VARCHAR(20) NOT NULL UNIQUE,
                       qualification_type ENUM('BTECH','HND') NOT NULL,
                       payment_status ENUM('PAID','UNPAID') NOT NULL,
+                      academic_year VARCHAR(10) NOT NULL,
+                      programme ENUM('ICT','Computer Science') NOT NULL,
                       level ENUM('L100','L200','L300','L400') NOT NULL,
                       role ENUM('STUDENT', 'FINANCIAL_SECRETARY', 'PRESIDENT') NOT NULL
 );
-
-
 
 CREATE TABLE confirmation_token (
                                     id           BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -21,6 +21,15 @@ CREATE TABLE confirmation_token (
                                     confirmed_at DATETIME,
                                     student_id      BIGINT NOT NULL,
                                     CONSTRAINT fk_confirmation_token_user FOREIGN KEY (student_id) REFERENCES student(id)
+);
+
+CREATE TABLE refresh_token (
+                               id           BIGINT AUTO_INCREMENT PRIMARY KEY,
+                               token        VARCHAR(255) NOT NULL UNIQUE,
+                               expires      DATETIME NOT NULL,
+                               revoked      BOOLEAN NOT NULL DEFAULT FALSE,
+                               student_id   BIGINT NOT NULL,
+                               CONSTRAINT fk_refresh_token_student FOREIGN KEY (student_id) REFERENCES student(id)
 );
 
 CREATE TABLE event_publication (

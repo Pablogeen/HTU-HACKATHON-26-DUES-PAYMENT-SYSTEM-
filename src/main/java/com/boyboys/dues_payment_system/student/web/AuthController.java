@@ -29,21 +29,21 @@ public class AuthController {
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<LoginResponse> verify(@RequestBody @Valid ConfirmationTokenRequest request) {
+    public ResponseEntity<AuthResponse> verify(@RequestBody @Valid ConfirmationTokenRequest request) {
         log.info("Request made to verify email for login access");
-        LoginResponse response = authService.verify(request);
+        AuthResponse response = authService.verify(request);
         log.info("Token has been verified successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/register-student")
-    //@PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN')")
-    public ResponseEntity<StudentResponse> registerStudent(@RequestBody @Valid RegisterRequest request) {
-        log.info("Request made to register a single student to the system : {}",request.getEmail());
-        StudentResponse response = authService.registerStudent(request);
-        log.info("Student has been registered to the system");
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@RequestBody @Valid RefreshTokenRequest request) {
+        log.info("Refresh token request received");
+        AuthResponse response = authService.refresh(request);
+        log.info("Access token refreshed successfully");
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @GetMapping("/resend-verification")
     public ResponseEntity<String> resendVerificationToken(@RequestParam  @NotBlank(message = "Email cannot be blank")
@@ -53,5 +53,13 @@ public class AuthController {
         String response =  authService.resendVerificationToken(email);
         return new ResponseEntity<>(response, HttpStatus.OK);
 
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestBody @Valid RefreshTokenRequest request) {
+        log.info("Logout request received");
+        String logoutMessage = authService.logout(request.getRefreshToken());
+        log.info("Student logged out successfully");
+        return new ResponseEntity<>(logoutMessage, HttpStatus.OK);
     }
 }

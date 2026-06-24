@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +24,7 @@ public class JwtHelper {
 
     public JwtToken generateToken(Student student) {
         Instant now = Instant.now();
-        Instant expiresAt = now.plusSeconds(jwtProperties.getAccessTokenExpiry());
+        Instant expiresAt = Instant.ofEpochMilli(System.currentTimeMillis() + 1000 * 60 * 30);
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .claim("issuer", jwtProperties.getIssuer())
                 .issuedAt(now)

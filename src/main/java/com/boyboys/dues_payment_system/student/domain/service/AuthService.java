@@ -1,16 +1,15 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
-import com.boyboys.dues_payment_system.student.domain.Role;
 import com.boyboys.dues_payment_system.student.Student;
-import com.boyboys.dues_payment_system.student.domain.ConfirmationToken;
-import com.boyboys.dues_payment_system.student.domain.ConfirmationTokenRepository;
-import com.boyboys.dues_payment_system.student.domain.PaymentStatus;
-import com.boyboys.dues_payment_system.student.domain.StudentRepository;
-import com.boyboys.dues_payment_system.student.domain.dto.*;
+import com.boyboys.dues_payment_system.student.UserLoginEvent;
+import com.boyboys.dues_payment_system.student.domain.*;
+import com.boyboys.dues_payment_system.student.domain.dto.AuthResponse;
+import com.boyboys.dues_payment_system.student.domain.dto.ConfirmationTokenRequest;
+import com.boyboys.dues_payment_system.student.domain.dto.LoginRequest;
+import com.boyboys.dues_payment_system.student.domain.dto.RefreshTokenRequest;
 import com.boyboys.dues_payment_system.student.domain.exception.*;
 import com.boyboys.dues_payment_system.student.domain.security.JwtHelper;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -18,6 +17,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -30,10 +30,11 @@ public class AuthService {
         private final JwtHelper jwtHelper;
         private final ConfirmationTokenHelper tokenHelper;
         private final ConfirmationTokenService tokenService;
-        private final ModelMapper modelMapper;
+        private final RefreshTokenRepository refreshTokenRepository;
 
 
-        public String login(LoginRequest request) {
+     @Transactional
+    public String login(LoginRequest request) {
             Student student = studentRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new StudentNotFoundException("No account found with this email"));
             log.info("Gotten the user from the db");
@@ -49,13 +50,14 @@ public class AuthService {
             log.info("Token has been saved");
 
             //Event will be published to send email
-          //  eventPublisher.publishEvent(new UserLoginEvent(this, user.getEmail(), user.getFullName(), token));
+            eventPublisher.publishEvent(new UserLoginEvent(student.getEmail(), student.getFirstName(), token));
 
             return "VERIFICATION EMAIL WAS SENT TO YOUR EMAIL";
         }
 
-        public LoginResponse verify(ConfirmationTokenRequest request) {
-            Student user = studentRepository.findByEmail(request.getEmail())
+    @Transactional
+    public AuthResponse verify(ConfirmationTokenRequest request) {
+            Student student = studentRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new StudentNotFoundException("NO ACCOUNT FOUND WITH THIS STUDENT EMAIL"));
 
             ConfirmationToken confirmationToken = tokenService.getToken(request.getToken())
@@ -75,10 +77,28 @@ public class AuthService {
             confirmationToken.setConfirmedAt(LocalDateTime.now());
             confirmationTokenRepository.save(confirmationToken);
 
-            var jwtToken = jwtHelper.generateToken(user);
+            refreshTokenRepository.revokeAllStudentTokens(student.getId());
 
-            return new LoginResponse(jwtToken.token(), jwtToken.expiresAt(), user.getEmail(), user.getRole().name());
+            String refreshTokenValue = UUID.randomUUID().toString();
+            log.info("Refresh token gotten");
 
+            RefreshToken refreshToken = new RefreshToken();
+            refreshToken.setToken(refreshTokenValue);
+            refreshToken.setExpires(LocalDateTime.now().plusDays(7));
+            refreshToken.setRevoked(false);
+            refreshToken.setStudent(student);
+
+            refreshTokenRepository.save(refreshToken);
+
+            var accessToken = jwtHelper.generateToken(student);
+            log.info("Access token generated");
+
+            AuthResponse response = new AuthResponse();
+            response.setAccessToken(String.valueOf(accessToken));
+            response.setRefreshToken(refreshTokenValue);
+            response.setRole(student.getRole().name());
+
+            return response;
         }
 
 
@@ -105,25 +125,55 @@ public class AuthService {
 
     }
 
-    public StudentResponse registerStudent(@Valid RegisterRequest request) {
-            log.info("Request made to register student");
-            boolean studentExist = studentRepository.existsByEmail(request.getEmail());
-            if(studentExist){
-                throw new EmailAlreadyExistException("EMAIL ALREADY TAKEN");
-            }
-        Student student = new Student();
-        student.setFirstName(request.getFirstName());
-        student.setMiddleName(request.getMiddleName());
-        student.setLastName(request.getLastName());
-        student.setEmail(request.getEmail());
-        student.setPhoneNumber(request.getPhoneNumber());
-        student.setLevel(request.getLevel());
-        student.setQualificationType(request.getQualificationType());
-        student.setRole(Role.STUDENT);
-        student.setPaymentStatus(PaymentStatus.UNPAID);
+    @Transactional
+    public AuthResponse refresh(RefreshTokenRequest request) {
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(request.getRefreshToken())
+                .orElseThrow(() -> new InvalidTokenException("Invalid refresh token"));
 
-        Student savedStudent = studentRepository.save(student);
-        log.info("Student saved into the db");
-        return modelMapper.map(savedStudent, StudentResponse.class);
+        if (refreshToken.isRevoked()) {
+            throw new InvalidTokenException("Refresh token has been revoked. Please login again");
+        }
+
+        if (refreshToken.getExpires().isBefore(LocalDateTime.now())) {
+            throw new InvalidTokenException("Refresh token has expired. Please login again");
+        }
+
+        Student student = refreshToken.getStudent();
+        log.info("Gotten refresh token");
+
+        refreshToken.setRevoked(true);
+        refreshTokenRepository.save(refreshToken);
+        log.info("Old refresh token invoked");
+
+        String newRefreshTokenValue = UUID.randomUUID().toString();
+        log.info("Refresh token generated");
+
+        RefreshToken newRefreshToken = new RefreshToken();
+        newRefreshToken.setToken(newRefreshTokenValue);
+        newRefreshToken.setExpires(LocalDateTime.now().plusDays(7));
+        newRefreshToken.setRevoked(false);
+        newRefreshToken.setStudent(student);
+
+        refreshTokenRepository.save(newRefreshToken);
+
+        var accessToken = jwtHelper.generateToken(student);
+
+        AuthResponse response = new AuthResponse();
+        response.setAccessToken(String.valueOf(accessToken));
+        response.setRefreshToken(newRefreshTokenValue);
+        response.setRole(student.getRole().name());
+
+        return response;
     }
+
+    @Transactional
+    public String logout(String token) {
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
+                .orElseThrow(() -> new InvalidTokenException("Invalid refresh token"));
+        refreshToken.setRevoked(true);
+        refreshTokenRepository.save(refreshToken);
+        return "LOGGED OUT SUCESSFULLY";
+    }
+
+
 }

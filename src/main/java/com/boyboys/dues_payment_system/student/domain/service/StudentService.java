@@ -1,15 +1,15 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
+import com.boyboys.dues_payment_system.student.Programme;
 import com.boyboys.dues_payment_system.student.domain.Role;
 import com.boyboys.dues_payment_system.student.Student;
 import com.boyboys.dues_payment_system.student.domain.PaymentStatus;
 import com.boyboys.dues_payment_system.student.domain.StudentRepository;
-import com.boyboys.dues_payment_system.student.domain.dto.CsvParseResult;
-import com.boyboys.dues_payment_system.student.domain.dto.ImportSummary;
-import com.boyboys.dues_payment_system.student.domain.dto.UpdateStudentRequest;
-import com.boyboys.dues_payment_system.student.domain.dto.StudentResponse;
+import com.boyboys.dues_payment_system.student.domain.dto.*;
+import com.boyboys.dues_payment_system.student.domain.exception.EmailAlreadyExistException;
 import com.boyboys.dues_payment_system.student.domain.exception.StudentNotFoundException;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -61,6 +61,30 @@ public class StudentService {
         return studentRepository.findAll(pageable).stream()
                 .map(user -> modelMapper.map(user, StudentResponse.class))
                 .toList();
+    }
+
+    public StudentResponse registerStudent(@Valid RegisterRequest request) {
+        log.info("Request made to register student");
+        boolean studentExist = studentRepository.existsByEmail(request.getEmail());
+        if(studentExist){
+            throw new EmailAlreadyExistException("EMAIL ALREADY TAKEN");
+        }
+        Student student = new Student();
+        student.setFirstName(request.getFirstName());
+        student.setMiddleName(request.getMiddleName());
+        student.setLastName(request.getLastName());
+        student.setEmail(request.getEmail());
+        student.setPhoneNumber(request.getPhoneNumber());
+        student.setLevel(request.getLevel());
+        student.setQualificationType(request.getQualificationType());
+        student.setRole(Role.STUDENT);
+        student.setPaymentStatus(PaymentStatus.UNPAID);
+        student.setAcademicYear(request.getAcademicYear());
+        student.setProgramme(request.getProgramme());
+
+        Student savedStudent = studentRepository.save(student);
+        log.info("Student saved into the db");
+        return modelMapper.map(savedStudent, StudentResponse.class);
     }
 
     public StudentResponse getStudentById(Long id) {
@@ -133,5 +157,17 @@ public class StudentService {
                 .stream()
                 .map(student -> modelMapper.map(student, StudentResponse.class))
                 .toList();
+    }
+
+    @Transactional
+    public List<StudentResponse> getStudentsByProgramme(Programme programme, Pageable pageable) {
+        return studentRepository.findByProgramme(programme, pageable)
+                .stream().map(student -> modelMapper.map(student, StudentResponse.class)).toList();
+    }
+
+    @Transactional
+    public List<StudentResponse> getStudentsByProgrammeAndPaymentStatus(Programme programme, PaymentStatus paymentStatus, Pageable pageable) {
+        return studentRepository.findByProgrammeAndPaymentStatus(programme, paymentStatus, pageable)
+                .stream().map(student -> modelMapper.map(student, StudentResponse.class)).toList();
     }
 }
