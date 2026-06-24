@@ -1,6 +1,9 @@
 package com.boyboys.dues_payment_system.student.web;
 
+import com.boyboys.dues_payment_system.student.Programme;
+import com.boyboys.dues_payment_system.student.domain.PaymentStatus;
 import com.boyboys.dues_payment_system.student.domain.dto.ImportSummary;
+import com.boyboys.dues_payment_system.student.domain.dto.RegisterRequest;
 import com.boyboys.dues_payment_system.student.domain.dto.StudentResponse;
 import com.boyboys.dues_payment_system.student.domain.dto.UpdateStudentRequest;
 import com.boyboys.dues_payment_system.student.domain.service.StudentService;
@@ -35,6 +38,16 @@ public class StudentController {
         log.info("Students have being imported into the system");
         return new ResponseEntity<>(summary, HttpStatus.OK);
     }
+
+    @PostMapping("/register-student")
+    //@PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN')")
+    public ResponseEntity<StudentResponse> registerStudent(@RequestBody @Valid RegisterRequest request) {
+        log.info("Request made to register a single student to the system : {}",request.getEmail());
+        StudentResponse response = studentService.registerStudent(request);
+        log.info("Student has been registered to the system");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
 
     @GetMapping
@@ -119,6 +132,33 @@ public class StudentController {
         Pageable pageable = PageRequest.of(page, size);
         List<StudentResponse> students = studentService.getStudentsByPaymentStatus(paymentStatus,pageable);
         log.info("Students gotten by payment status: {}", students.size());
+        return new ResponseEntity<>(students, HttpStatus.OK);
+    }
+
+    @GetMapping("/programme")
+    @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
+    public ResponseEntity<List<StudentResponse>> getStudentsByProgramme(
+                                @RequestParam Programme programme,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "10") int size) {
+        log.info("Getting students by programme: {}", programme);
+        Pageable pageable = PageRequest.of(page, size);
+        List<StudentResponse> students = studentService.getStudentsByProgramme(programme,pageable);
+        log.info("Students gotten by programme: {}", students.size());
+        return new ResponseEntity<>(students, HttpStatus.OK);
+    }
+
+    @GetMapping("/programme/payment-status")
+    @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
+    public ResponseEntity<List<StudentResponse>> getStudentsByProgrammeAndPaymentStatus(
+                                    @RequestParam Programme programme,
+                                    @RequestParam PaymentStatus paymentStatus,
+                                    @RequestParam(defaultValue = "0") int page,
+                                    @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        log.info("Getting students by programme: {} and payment status: {}", programme, paymentStatus);
+        List<StudentResponse> students = studentService.getStudentsByProgrammeAndPaymentStatus(programme, paymentStatus,pageable);
+        log.info("Students gotten: {}", students.size());
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 }

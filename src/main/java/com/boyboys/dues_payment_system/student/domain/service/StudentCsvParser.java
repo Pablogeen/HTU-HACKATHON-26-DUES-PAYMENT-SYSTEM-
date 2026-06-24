@@ -1,6 +1,7 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
 
+import com.boyboys.dues_payment_system.student.Programme;
 import com.boyboys.dues_payment_system.student.domain.Level;
 import com.boyboys.dues_payment_system.student.domain.Role;
 import com.boyboys.dues_payment_system.student.Student;
@@ -55,8 +56,24 @@ public class StudentCsvParser {
                 String phoneNumber = columns[4].trim();
                 String levelStr = columns[5].trim();
                 String qualification = columns[6].trim();
+                String academicYear = columns[7].trim();
+                String programmeStr = columns[8].trim();
 
-                if (hasBlankFields(firstName, lastName, email, phoneNumber , levelStr, qualification)) {
+
+                Programme programme;
+                try {
+                    programme = Programme.valueOf(programmeStr.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    skippedReasons.add("Row " + totalRows + ": Invalid programme value - " + programmeStr);
+                    continue;
+                }
+
+                if (columns.length != 8) {
+                    skippedReasons.add("Row " + totalRows + ": Invalid number of columns");
+                    continue;
+                }
+
+                if (hasBlankFields(firstName, lastName, email, phoneNumber , levelStr, qualification,academicYear, programmeStr)) {
                     skippedReasons.add("Row " + totalRows + ": One or more fields are blank");
                     continue;
                 }
@@ -103,17 +120,19 @@ public class StudentCsvParser {
                 }
 
 
-                Student user = new Student();
-                user.setFirstName(firstName);
-                user.setMiddleName(middleName.isEmpty() ? null : middleName);
-                user.setLastName(lastName);
-                user.setEmail(email);
-                user.setPhoneNumber(phoneNumber);
-                user.setLevel(Level.valueOf(levelStr));
-                user.setRole(Role.STUDENT);
-                user.setPaymentStatus(PaymentStatus.UNPAID);
+                Student student = new Student();
+                student.setFirstName(firstName);
+                student.setMiddleName(middleName.isEmpty() ? null : middleName);
+                student.setLastName(lastName);
+                student.setEmail(email);
+                student.setPhoneNumber(phoneNumber);
+                student.setLevel(Level.valueOf(levelStr));
+                student.setRole(Role.STUDENT);
+                student.setPaymentStatus(PaymentStatus.UNPAID);
+                student.setAcademicYear(academicYear);
+                student.setProgramme(programme);
 
-                validUsers.add(user);
+                validUsers.add(student);
             }
 
         } catch (IOException e) {

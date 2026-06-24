@@ -52,6 +52,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(details, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<?> invalidTokenException(InvalidTokenException e, WebRequest request) {
+        log.error("Invalid Token");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "INVALID TOKEN",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler(PhoneNumberAlreadyTakenException.class)
     public ResponseEntity<?> phoneNumberAlreadyExistException(PhoneNumberAlreadyTakenException e, WebRequest request) {
         log.error("Phone Number already exists");
