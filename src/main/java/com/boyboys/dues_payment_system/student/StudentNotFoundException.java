@@ -1,4 +1,4 @@
-package com.boyboys.dues_payment_system.student.domain.exception;
+package com.boyboys.dues_payment_system.student;
 
 public class StudentNotFoundException extends RuntimeException{
 

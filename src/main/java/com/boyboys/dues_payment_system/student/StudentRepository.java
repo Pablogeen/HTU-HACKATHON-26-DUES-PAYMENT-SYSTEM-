@@ -1,8 +1,6 @@
-package com.boyboys.dues_payment_system.student.domain;
+package com.boyboys.dues_payment_system.student;
 
 
-import com.boyboys.dues_payment_system.student.Programme;
-import com.boyboys.dues_payment_system.student.Student;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

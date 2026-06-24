@@ -1,5 +1,7 @@
 package com.boyboys.dues_payment_system;
 
+import com.boyboys.dues_payment_system.payment.domain.PaymentException;
+import com.boyboys.dues_payment_system.student.StudentNotFoundException;
 import com.boyboys.dues_payment_system.student.domain.exception.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -144,6 +146,19 @@ public class GlobalExceptionHandler {
                 request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.TOO_MANY_REQUESTS);
+    }
+
+    //Payments
+    @ExceptionHandler(PaymentException.class)
+    public ResponseEntity<?> paymentException(PaymentException e, WebRequest request) {
+        log.error("Payment not processed");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "PAYMENT NOT PROCESSED",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.INTERNAL_SERVER_ERROR);
+
     }
 
 

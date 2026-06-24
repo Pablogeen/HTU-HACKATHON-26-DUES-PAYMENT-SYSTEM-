@@ -1,8 +1,8 @@
 package com.boyboys.dues_payment_system.student.domain.security;
 
 import com.boyboys.dues_payment_system.student.Student;
-import com.boyboys.dues_payment_system.student.domain.StudentRepository;
-import com.boyboys.dues_payment_system.student.domain.exception.StudentNotFoundException;
+import com.boyboys.dues_payment_system.student.StudentRepository;
+import com.boyboys.dues_payment_system.student.StudentNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

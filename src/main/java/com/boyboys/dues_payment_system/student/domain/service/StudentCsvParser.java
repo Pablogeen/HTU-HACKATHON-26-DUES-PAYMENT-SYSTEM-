@@ -5,7 +5,7 @@ import com.boyboys.dues_payment_system.student.Programme;
 import com.boyboys.dues_payment_system.student.domain.Level;
 import com.boyboys.dues_payment_system.student.domain.Role;
 import com.boyboys.dues_payment_system.student.Student;
-import com.boyboys.dues_payment_system.student.domain.PaymentStatus;
+import com.boyboys.dues_payment_system.student.PaymentStatus;
 import com.boyboys.dues_payment_system.student.domain.dto.CsvParseResult;
 import com.boyboys.dues_payment_system.student.domain.exception.InvalidFileException;
 import org.springframework.stereotype.Component;
@@ -44,7 +44,7 @@ public class StudentCsvParser {
                 totalRows++;
                 String[] columns = line.split(",");
 
-                if (columns.length != 4) {
+                if (columns.length != 9) {
                     skippedReasons.add("Row " + totalRows + ": Invalid number of columns");
                     continue;
                 }

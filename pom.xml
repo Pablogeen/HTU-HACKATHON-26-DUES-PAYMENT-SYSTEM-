@@ -33,6 +33,11 @@
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.bucket4j</groupId>
 			<artifactId>bucket4j_jdk17-core</artifactId>

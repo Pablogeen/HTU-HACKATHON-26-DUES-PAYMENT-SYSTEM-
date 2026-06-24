@@ -1,7 +1,7 @@
 package com.boyboys.dues_payment_system.student.web;
 
 import com.boyboys.dues_payment_system.student.Programme;
-import com.boyboys.dues_payment_system.student.domain.PaymentStatus;
+import com.boyboys.dues_payment_system.student.PaymentStatus;
 import com.boyboys.dues_payment_system.student.domain.dto.ImportSummary;
 import com.boyboys.dues_payment_system.student.domain.dto.RegisterRequest;
 import com.boyboys.dues_payment_system.student.domain.dto.StudentResponse;

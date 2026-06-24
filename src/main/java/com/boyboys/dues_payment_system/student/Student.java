@@ -1,7 +1,6 @@
 package com.boyboys.dues_payment_system.student;
 
 import com.boyboys.dues_payment_system.student.domain.Level;
-import com.boyboys.dues_payment_system.student.domain.PaymentStatus;
 import com.boyboys.dues_payment_system.student.domain.Qualification;
 import com.boyboys.dues_payment_system.student.domain.Role;
 import jakarta.persistence.*;
