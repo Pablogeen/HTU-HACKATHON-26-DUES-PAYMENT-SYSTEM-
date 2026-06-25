@@ -20,7 +20,7 @@ public class EmailService {
     public void onStudentLogin(StudentLoginEvent event) {
         outboxRepository.save(new EmailOutbox(
                 event.email(),
-                "Verify Your Student Email — COMPSSA",
+                "VERIFY YOUR STUDENT EMAIL — COMPSSA",
                 EmailType.VERIFICATION,
                 event.firstname()+ "|" + event.token()));
     }
@@ -29,7 +29,7 @@ public class EmailService {
     public void paymentSucceededNotification(PaymentSucceededEvent event) {
         outboxRepository.save(new EmailOutbox(
                 event.email(),
-                "Thank You for Your Contribution — BEN & CO",
+                "PAYMENT OF COMPSSA DUES — COMPSSA",
                 EmailType.PAYMENT_SUCCEEDED,
                 event.firstName()+ "|" + event.reference()));
     }

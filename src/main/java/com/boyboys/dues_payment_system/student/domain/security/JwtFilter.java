@@ -64,7 +64,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 if (jwtHelper.isTokenValid(token, userDetails)) {
                     Student student = userRepo.findByEmail(userDetails.getUsername())
-                            .orElseThrow(() -> new StudentNotFoundException("USER NOT FOUND"));
+                            .orElseThrow(() -> new StudentNotFoundException("STUDENT NOT FOUND"));
 
                     String role = jwtHelper.extractRole(token);
 
