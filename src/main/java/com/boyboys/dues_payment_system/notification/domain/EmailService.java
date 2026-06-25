@@ -33,15 +33,15 @@ public class EmailService {
                 EmailType.PAYMENT_SUCCEEDED,
                 event.firstName()+ "|" + event.reference()));
     }
-//
-//    @ApplicationModuleListener
-//    public void onArticleContributedNotifyAdmin(ArticleContributedEvent event) {
-//        outboxRepository.save(new EmailOutbox(
-//                adminEmail,
-//                "New Article Submission — BEN & CO",
-//                EmailType.ADMIN_NOTIFICATION,
-//                event.articleTitle() + "|" + event.email()));
-//    }
+
+    @ApplicationModuleListener
+    public void onArticleContributedNotifyAdmin(DuesReminderEvent event) {
+        outboxRepository.save(new EmailOutbox(
+                event.email(),
+                "PAYMENT OF COMPSSA DUES — COMPSSA",
+                EmailType.DUES_REMINDER,
+                event.firstname()));
+    }
 //
 //    @ApplicationModuleListener
 //    public void onArticleApproved(ArticleReviewedApprovedEvent event) {

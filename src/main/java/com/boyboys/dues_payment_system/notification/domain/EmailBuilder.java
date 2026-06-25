@@ -213,4 +213,112 @@ public class EmailBuilder {
                 """.formatted(firstName, transactionReference);
     }
 
+    public String buildDuesReminderEmailHtml(String firstName) {
+        return """
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                  <meta charset="UTF-8"/>
+                  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+                  <title>COMPSSA — Dues Payment Reminder</title>
+                </head>
+                <body style="margin:0; padding:40px 16px; background:#e8edf2; font-family:Arial, sans-serif;">
+
+                <table width="100%%" cellpadding="0" cellspacing="0" border="0"
+                       style="max-width:600px; margin:0 auto; background:#ffffff; border-radius:4px; overflow:hidden; border:1px solid #cbd5e1;">
+
+                  <!-- HEADER -->
+                  <tr>
+                    <td style="background:linear-gradient(135deg, #1a3a6b 0%%, #1e4d8c 60%%, #2563eb 100%%); padding:36px 40px; text-align:center;">
+                      <span style="font-family:Georgia, serif; font-size:28px; font-weight:700; letter-spacing:5px; color:#ffffff; display:block;">
+                        COMPSSA
+                      </span>
+                      <span style="font-family:Arial, sans-serif; font-size:12px; letter-spacing:2px; color:#93c5fd; text-transform:uppercase; display:block; margin-top:8px;">
+                        Ho Technical University
+                      </span>
+                    </td>
+                  </tr>
+
+                  <!-- BLUE ACCENT BAR -->
+                  <tr>
+                    <td style="background:#2563eb; padding:6px 0;"></td>
+                  </tr>
+
+                  <!-- AMBER NOTICE BAR -->
+                  <tr>
+                    <td style="background:#fff7ed; padding:12px 40px; text-align:center; border-bottom:1px solid #fed7aa;">
+                      <span style="font-family:Arial, sans-serif; font-size:12px; font-weight:700; letter-spacing:2px; color:#c2410c; text-transform:uppercase;">
+                        &#9888; Outstanding Dues Notice
+                      </span>
+                    </td>
+                  </tr>
+
+                  <!-- BODY -->
+                  <tr>
+                    <td style="padding:44px 40px 32px 40px; background:#ffffff;">
+
+                      <!-- Greeting -->
+                      <p style="margin:0 0 20px 0; font-size:20px; font-weight:700; color:#1e293b; font-family:Georgia, serif;">
+                        Hello, %s,
+                      </p>
+
+                      <!-- Opening -->
+                      <p style="margin:0 0 20px 0; font-size:15px; line-height:1.8; color:#475569;">
+                        We hope this message finds you well. This is a formal reminder from
+                        <strong style="color:#1a3a6b;">COMPSSA</strong> regarding your outstanding
+                        department dues for the current academic period.
+                      </p>
+
+                      <p style="margin:0 0 32px 0; font-size:15px; line-height:1.8; color:#475569;">
+                        Our records indicate that your dues payment has not yet been received.
+                        We kindly urge you to settle your outstanding balance at your earliest convenience
+                        to remain in good standing with the department and continue to enjoy the full
+                        benefits of COMPSSA membership.
+                      </p>
+
+                      <!-- Divider -->
+                      <div style="height:1px; background:#e2e8f0; margin:0 0 28px 0;"></div>
+
+                      <!-- Action -->
+                      <p style="margin:0 0 20px 0; font-size:15px; line-height:1.8; color:#475569;">
+                        Please log in to the <strong style="color:#1a3a6b;">COMPSSA Dues Payment System</strong>
+                        to complete your payment. Prompt settlement ensures uninterrupted access to
+                        departmental resources and activities.
+                      </p>
+
+                      <!-- Closing -->
+                      <p style="margin:0; font-size:14px; line-height:1.7; color:#475569;">
+                        If you believe you have already made this payment or if you have any concerns,
+                        please contact the COMPSSA financial team with your transaction reference for verification.
+                      </p>
+
+                    </td>
+                  </tr>
+
+                  <!-- DIVIDER -->
+                  <tr>
+                    <td style="padding:0 40px; background:#ffffff;">
+                      <div style="height:1px; background:#e2e8f0;"></div>
+                    </td>
+                  </tr>
+
+                  <!-- FOOTER -->
+                  <tr>
+                    <td style="background:#f8fafc; padding:24px 40px; text-align:center;">
+                      <p style="margin:0 0 6px 0; font-size:12px; color:#94a3b8;">
+                        &copy; 2026 <strong style="color:#1a3a6b;">COMPSSA</strong> — Ho Technical University. All rights reserved.
+                      </p>
+                      <p style="margin:0; font-size:11px; color:#cbd5e1; font-style:italic;">
+                        This is an automated email. Please do not reply to this message.
+                      </p>
+                    </td>
+                  </tr>
+
+                </table>
+
+                </body>
+                </html>
+                """.formatted(firstName);
+    }
+
 }

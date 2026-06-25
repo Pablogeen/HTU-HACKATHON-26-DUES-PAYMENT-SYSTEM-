@@ -51,18 +51,8 @@ public class EmailOutboxProcessor {
                 String[] parts = outbox.getReference().split("\\|");
                 yield emailBuilder.buildPaymentSuccessEmailHtml(parts[0], parts[1]);
             }
-//            case ARTICLE_APPROVED ->
-//                    emailBuilder.buildArticleApprovedEmailHtml(outbox.getReference());
-//            case ARTICLE_REJECTED ->
-//                    emailBuilder.buildArticleRejectedEmailHtml(outbox.getReference());
-//            case CONTACT_ME -> {
-//                String[] parts = outbox.getReference().split("\\|", 4);
-//                yield emailBuilder.buildContactRequestEmail(
-//                        parts[0],  // email
-//                        parts[1],  // phoneNumber
-//                        parts[2],  // reasonForContact
-//                        parts[3]  );// message);
-//            }
+            case DUES_REMINDER ->
+                    emailBuilder.buildDuesReminderEmailHtml(outbox.getReference());
        };
     }
 
