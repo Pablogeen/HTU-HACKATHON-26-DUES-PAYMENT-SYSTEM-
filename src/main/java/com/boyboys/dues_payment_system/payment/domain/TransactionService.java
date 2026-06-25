@@ -73,7 +73,7 @@ public class TransactionService {
                 .callbackUrl(callbackUrl)
                 .build();
 
-        PaystackInitializeResponse paystackResponse = paystackClient.initializePayment(paystackRequest);
+        PaystackVerifyResponse paystackResponse = paystackClient.initializePayment(paystackRequest);
 
         Transaction transaction = new Transaction();
         transaction.setReference(reference);

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PaystackInitializeResponse {
+public class PaystackVerifyResponse {
 
     private boolean status;
     private String message;
@@ -23,5 +23,7 @@ public class PaystackInitializeResponse {
         private String accessCode;
 
         private String reference;
+
+        private String status;
     }
 }

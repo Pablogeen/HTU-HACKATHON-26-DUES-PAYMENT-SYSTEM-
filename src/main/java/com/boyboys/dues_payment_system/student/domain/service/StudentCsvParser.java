@@ -44,7 +44,7 @@ public class StudentCsvParser {
                 totalRows++;
                 String[] columns = line.split(",");
 
-                if (columns.length != 9) {
+                if (columns.length != 8) {
                     skippedReasons.add("Row " + totalRows + ": Invalid number of columns");
                     continue;
                 }
