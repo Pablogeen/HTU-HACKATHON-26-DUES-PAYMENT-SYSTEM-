@@ -47,12 +47,10 @@ public class EmailOutboxProcessor {
                 String[] parts = outbox.getReference().split("\\|");
                 yield emailBuilder.buildOtpEmailHtml(parts[0], parts[1]);
             }
-//            case CONTRIBUTION ->
-//                    emailBuilder.buildContributionEmailHtml(outbox.getReference());
-//            case ADMIN_NOTIFICATION -> {
-//                String[] parts = outbox.getReference().split("\\|");
-//                yield emailBuilder.buildAdminNotificationEmailHtml(parts[0], parts[1]);
-//            }
+            case PAYMENT_SUCCEEDED -> {
+                String[] parts = outbox.getReference().split("\\|");
+                yield emailBuilder.buildPaymentSuccessEmailHtml(parts[0], parts[1]);
+            }
 //            case ARTICLE_APPROVED ->
 //                    emailBuilder.buildArticleApprovedEmailHtml(outbox.getReference());
 //            case ARTICLE_REJECTED ->

@@ -9,7 +9,6 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class JwtHelper {
 
 
 
-    public JwtToken generateToken(Student student) {
+    public String generateToken(Student student) {
         Instant now = Instant.now();
         Instant expiresAt = Instant.ofEpochMilli(System.currentTimeMillis() + 1000 * 60 * 30);
         JwtClaimsSet claims = JwtClaimsSet.builder()
@@ -36,7 +35,7 @@ public class JwtHelper {
         var token = this.encoder.encode(
                 JwtEncoderParameters.from(
                         JwsHeader.with(MacAlgorithm.HS256).build(), claims)).getTokenValue();
-        return new JwtToken(token, expiresAt);
+        return token;
     }
 
     public String extractUsername(String token) {

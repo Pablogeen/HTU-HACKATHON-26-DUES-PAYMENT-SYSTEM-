@@ -24,10 +24,10 @@ public class PayStackClient {
                 .build();
     }
 
-    public InitializePaymentResponse initializePayment(InitializePaymentRequest request) {
+    public PaystackInitializeResponse initializePayment(PaystackInitializeRequest request) {
         log.info("Initializing payment with Paystack for reference: {}", request.getReference());
         try {
-            InitializePaymentResponse response = restClient.post()
+            PaystackInitializeResponse response = restClient.post()
                     .uri(initializeUrl)
                     .header("Authorization", "Bearer " + secretKey)
                     .header("Content-Type", "application/json")
@@ -41,9 +41,9 @@ public class PayStackClient {
                         log.error("Paystack server error: {} - {}", res.getStatusCode(), res.getStatusText());
                         throw new PaymentException("Paystack is currently unavailable. Please try again later");
                     })
-                    .body(InitializePaymentResponse.class);
+                    .body(PaystackInitializeResponse.class);
 
-            if (response == null || response.getAuthorizationUrl() == null)  {
+            if (response == null || response.getData() == null)  {
                 log.error("Paystack returned unsuccessful response for reference: {}", request.getReference());
                 throw new PaymentException("Payment initialization failed. Please try again");
             }

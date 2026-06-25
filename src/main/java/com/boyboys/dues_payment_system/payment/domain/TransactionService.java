@@ -39,6 +39,8 @@ public class TransactionService {
     public InitializePaymentResponse initializePayment(String email) {
         log.info("Initializing payment for student: {}", email);
 
+
+        //Pessemitic lock to be implemented to prevent race conditions
         Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
 
@@ -63,19 +65,19 @@ public class TransactionService {
         long amount = transactionHelper.getDuesAmountInPesewas();
         log.info("Amount generated: {}",amount);
 
-        InitializePaymentRequest paystackRequest = InitializePaymentRequest.builder()
+        PaystackInitializeRequest paystackRequest = PaystackInitializeRequest.builder()
                 .email(student.getEmail())
                 .amount(amount)
                 .reference(reference)
                 .callbackUrl(callbackUrl)
                 .build();
 
-        InitializePaymentResponse paystackResponse = paystackClient.initializePayment(paystackRequest);
+        PaystackInitializeResponse paystackResponse = paystackClient.initializePayment(paystackRequest);
 
         Transaction transaction = new Transaction();
         transaction.setReference(reference);
-        transaction.setPaystackReference(paystackResponse.getReference());
-        transaction.setAccessCode(paystackResponse.getAccessCode());
+        transaction.setPaystackReference(paystackResponse.getData().getReference());
+        transaction.setAccessCode(paystackResponse.getData().getAccessCode());
         transaction.setAmount(amount);
         transaction.setStatus(TransactionStatus.PENDING);
         transaction.setCreatedAt(LocalDateTime.now());
@@ -85,8 +87,8 @@ public class TransactionService {
         log.info("Transaction saved successfully for student: {}", email);
 
         return InitializePaymentResponse.builder()
-                .authorizationUrl(paystackResponse.getAuthorizationUrl())
-                .accessCode(paystackResponse.getAccessCode())
+                .authorizationUrl(paystackResponse.getData().getAuthorizationUrl())
+                .accessCode(paystackResponse.getData().getAccessCode())
                 .reference(reference)
                 .status(TransactionStatus.PENDING)
                 .build();

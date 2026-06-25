@@ -95,7 +95,7 @@ public class AuthService {
             log.info("Access token generated");
 
             AuthResponse response = new AuthResponse();
-            response.setAccessToken(String.valueOf(accessToken));
+            response.setAccessToken(accessToken);
             response.setRefreshToken(refreshTokenValue);
             response.setRole(student.getRole().name());
 

@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class InitializePaymentRequest {
+public class PaystackInitializeRequest {
 
     private String email;
     private Long amount;
