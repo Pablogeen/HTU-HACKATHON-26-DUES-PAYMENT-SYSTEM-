@@ -34,7 +34,7 @@ public class TransactionController {
 
     @PostMapping("/webhook")
     public ResponseEntity<Void> handleWebhook(
-            @RequestBody String payload,
+            @RequestBody byte[] payload,
             @RequestHeader("x-paystack-signature") String paystackSignature,
             HttpServletRequest request) {
         log.info("Webhook received from Paystack");

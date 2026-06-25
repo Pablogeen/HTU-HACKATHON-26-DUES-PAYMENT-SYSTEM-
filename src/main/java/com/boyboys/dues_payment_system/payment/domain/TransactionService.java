@@ -54,6 +54,7 @@ public class TransactionService {
                     .orElseThrow(() -> new PaymentException("Transaction not found"));
             log.info("Returning existing pending transaction for student: {}", email);
             return InitializePaymentResponse.builder()
+                    .authorizationUrl("https://checkout.paystack.com/"+existing.getAccessCode())
                     .accessCode(existing.getAccessCode())
                     .reference(existing.getReference())
                     .status(TransactionStatus.PENDING)
@@ -94,8 +95,9 @@ public class TransactionService {
                 .build();
     }
 
+
     @Transactional
-    public void handleWebhook(String payload, String paystackSignature, HttpServletRequest request) {
+    public void handleWebhook(byte[] payload, String paystackSignature, HttpServletRequest request) {
         log.info("Webhook received from Paystack");
 
         if (!webhookHelper.isValidIp(request)) {
@@ -112,6 +114,8 @@ public class TransactionService {
             JsonNode webhookData = objectMapper.readTree(payload);
             String event = webhookData.get("event").asText();
             String reference = webhookData.get("data").get("reference").asText();
+            // rest of the code remains the same
+
 
             log.info("Webhook event: {} for reference: {}", event, reference);
 
@@ -145,6 +149,7 @@ public class TransactionService {
 
     @Transactional
     public TransactionStatusResponse getPaymentStatus(String reference) {
+        //Pessimistic locks here
         Transaction transaction = transactionRepository.findByReference(reference)
                 .orElseThrow(() -> new PaymentException("Transaction not found"));
         return new TransactionStatusResponse(

@@ -33,19 +33,21 @@ public class WebhookHelper {
         String ip = getClientIp(request);
         return PAYSTACK_IPS.contains(ip);
     }
-
-    public boolean isValidSignature(String payload, String paystackSignature) {
+    public boolean isValidSignature(byte[] payload, String paystackSignature) {
         try {
             Mac mac = Mac.getInstance("HmacSHA512");
             SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), "HmacSHA512");
             mac.init(secretKeySpec);
-            byte[] hmac = mac.doFinal(payload.getBytes());
+            byte[] hmac = mac.doFinal(payload);
             String computedSignature = Hex.encodeHexString(hmac);
+            log.info("Computed signature: {}", computedSignature);
+            log.info("Paystack signature: {}", paystackSignature);
             return computedSignature.equals(paystackSignature);
         } catch (Exception e) {
             log.error("Error verifying webhook signature: {}", e.getMessage());
             return false;
         }
+
     }
 
     private String getClientIp(HttpServletRequest request) {

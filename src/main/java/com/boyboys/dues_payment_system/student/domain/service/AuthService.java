@@ -36,6 +36,7 @@ public class AuthService {
 
      @Transactional
     public String login(LoginRequest request) {
+         //Pessimistic locks here
             Student student = studentRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new StudentNotFoundException("No account found with this email"));
             log.info("Gotten the user from the db");
@@ -58,6 +59,8 @@ public class AuthService {
 
     @Transactional
     public AuthResponse verify(ConfirmationTokenRequest request) {
+
+         //Pessimistic locks here
             Student student = studentRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new StudentNotFoundException("NO ACCOUNT FOUND WITH THIS STUDENT EMAIL"));
 
@@ -127,6 +130,8 @@ public class AuthService {
 
     @Transactional
     public AuthResponse refresh(RefreshTokenRequest request) {
+
+         //Pessemistic locks here
         RefreshToken refreshToken = refreshTokenRepository.findByToken(request.getRefreshToken())
                 .orElseThrow(() -> new InvalidTokenException("Invalid refresh token"));
 
