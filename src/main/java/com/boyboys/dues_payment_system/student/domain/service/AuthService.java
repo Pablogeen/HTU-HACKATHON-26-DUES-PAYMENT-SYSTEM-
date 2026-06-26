@@ -164,7 +164,7 @@ public class AuthService {
         var accessToken = jwtHelper.generateToken(student);
 
         AuthResponse response = new AuthResponse();
-        response.setAccessToken(String.valueOf(accessToken));
+        response.setAccessToken(accessToken);
         response.setRefreshToken(newRefreshTokenValue);
         response.setRole(student.getRole().name());
 
