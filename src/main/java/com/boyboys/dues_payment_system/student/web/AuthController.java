@@ -2,6 +2,8 @@ package com.boyboys.dues_payment_system.student.web;
 
 import com.boyboys.dues_payment_system.student.domain.dto.*;
 import com.boyboys.dues_payment_system.student.domain.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,10 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Authentication", description = "Endpoints for student authentication and registration")
 public class AuthController {
 
     private final AuthService authService;
 
+    @Operation(
+            summary = "Login",
+            description = "Accepts student email and sends a 6-digit OTP to the student's email for verification")
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody @Valid LoginRequest request) {
         log.info("Request made to login with email: {}",request.getEmail());
@@ -28,6 +34,9 @@ public class AuthController {
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Verify OTP",
+            description = "Accepts student email and OTP. Returns JWT access token and refresh token on success")
     @PostMapping("/verify")
     public ResponseEntity<AuthResponse> verify(@RequestBody @Valid ConfirmationTokenRequest request) {
         log.info("Request made to verify email for login access");
@@ -36,6 +45,9 @@ public class AuthController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Refresh Token",
+            description = "Accepts a valid refresh token and returns a new access token and refresh token")
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponse> refresh(@RequestBody @Valid RefreshTokenRequest request) {
         log.info("Refresh token request received");
@@ -45,6 +57,9 @@ public class AuthController {
     }
 
 
+    @Operation(
+            summary = "Resend verification token",
+            description = "Requests to resend email verification if token has expired or unable to get the email")
     @GetMapping("/resend-verification")
     public ResponseEntity<String> resendVerificationToken(@RequestParam  @NotBlank(message = "Email cannot be blank")
                                                           @Email(message = "Invalid email format")
@@ -55,6 +70,9 @@ public class AuthController {
 
     }
 
+    @Operation(
+            summary = "Logout",
+            description = "Revokes the student's refresh token. Student will need to login again after this")
     @PostMapping("/logout")
     public ResponseEntity<String> logout(@RequestBody @Valid RefreshTokenRequest request) {
         log.info("Logout request received");

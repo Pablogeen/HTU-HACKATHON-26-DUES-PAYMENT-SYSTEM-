@@ -2,6 +2,8 @@ package com.boyboys.dues_payment_system.reports.domain;
 
 
 import com.boyboys.dues_payment_system.student.Programme;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -20,11 +22,16 @@ import java.util.List;
 @RequestMapping("/api/v1/reports")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Reports  ", description = "Endpoints to Generate Report")
 public class ReportController {
 
     private final ReportService reportService;
     private final ReportPdfGenerator reportPdfGenerator;
 
+
+    @Operation(
+            summary = "Summary",
+            description = "Gets all summaary of reports")
     @GetMapping("/summary")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<OverallSummaryResponse> getOverallSummary() {
@@ -34,6 +41,9 @@ public class ReportController {
         return new ResponseEntity<>(summary, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Download Summary",
+            description = "Allows downloading of report summary")
     @GetMapping("/summary/download")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<byte[]> downloadOverallSummary() {
@@ -47,6 +57,10 @@ public class ReportController {
                 .body(pdf);
     }
 
+    @Operation(
+            summary = "Summary Per Each Programme",
+            description = "Gets all the report summary by a programme")
+
     @GetMapping("/summary/programme/{programme}")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<ProgrammeDetailSummaryResponse> getProgrammeSummary(
@@ -57,6 +71,10 @@ public class ReportController {
         return new ResponseEntity<>(summary, HttpStatus.OK);
     }
 
+
+    @Operation(
+            summary = "Download Report Summary Per Programme",
+            description = "Enables downloading of report summary per programme")
     @GetMapping("/summary/programme/{programme}/download")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<byte[]> downloadProgrammeSummary(@PathVariable Programme programme) {
@@ -70,6 +88,9 @@ public class ReportController {
                 .body(pdf);
     }
 
+    @Operation(
+            summary = "Transaction History",
+            description = "Compiles all history of transactions made")
     @GetMapping("/transactions")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<List<TransactionReportResponse>> getTransactionHistory() {
@@ -79,6 +100,9 @@ public class ReportController {
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Download Transaction History",
+            description = "Enables downloading of transaction history")
     @GetMapping("/transactions/download")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<byte[]> downloadTransactionHistory() {

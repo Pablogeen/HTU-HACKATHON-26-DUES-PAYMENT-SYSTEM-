@@ -7,6 +7,8 @@ import com.boyboys.dues_payment_system.student.domain.dto.RegisterRequest;
 import com.boyboys.dues_payment_system.student.domain.dto.StudentResponse;
 import com.boyboys.dues_payment_system.student.domain.dto.UpdateStudentRequest;
 import com.boyboys.dues_payment_system.student.domain.service.StudentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +28,15 @@ import java.util.List;
 @RequestMapping("/api/v1/students")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Student Endpoints", description = "Endpoints for student details")
 public class StudentController {
 
     private final StudentService studentService;
 
+
+    @Operation(
+            summary = "Import Students",
+            description = "Allows the importation of students using a .csv file")
     @PostMapping("/import")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY','ADMIN')")
     public ResponseEntity<ImportSummary> importStudents(@RequestParam("file") MultipartFile file) {
@@ -39,6 +46,9 @@ public class StudentController {
         return new ResponseEntity<>(summary, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Register student",
+            description = "Registers one or few students manually when dataset is not big enough for imports")
     @PostMapping("/register-student")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN')")
     public ResponseEntity<StudentResponse> registerStudent(@RequestBody @Valid RegisterRequest request) {
@@ -49,7 +59,9 @@ public class StudentController {
     }
 
 
-
+    @Operation(
+            summary = "Get all students",
+            description = "This endpoint gets all the students in the department")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN','FINANCIAL_SECRETARY')")
     public ResponseEntity<List<StudentResponse>> getAllStudents(@RequestParam(defaultValue = "0") int page,
@@ -61,6 +73,9 @@ public class StudentController {
     }
 
 
+    @Operation(
+            summary = "Get Student Id",
+            description = "Get student by the id(Not student email)")
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY','ADMIN')")
     public ResponseEntity<StudentResponse> getStudentById(@PathVariable Long id) {
@@ -70,6 +85,10 @@ public class StudentController {
         return new ResponseEntity<>(studentResponse, HttpStatus.OK);
     }
 
+
+    @Operation(
+            summary = "Update students ",
+            description = "Updates students by student emails")
     @PutMapping("/{email}")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN')")
     public ResponseEntity<StudentResponse> updateStudent(@PathVariable String email,
@@ -80,6 +99,9 @@ public class StudentController {
         return new ResponseEntity<>(updatedResponse, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Assign Role",
+            description = "This endpoint allows the admin or the President assign role to a student")
     @PutMapping("/{email}/assign-role")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN')")
     public ResponseEntity<StudentResponse> assignRole(@PathVariable String email) {
@@ -89,6 +111,10 @@ public class StudentController {
         return new ResponseEntity<>(studentResponse, HttpStatus.OK);
     }
 
+
+    @Operation(
+            summary = "Revoke role",
+            description = "This endpoint enables the the president or admin revoke a role of a student")
     @PutMapping("/{email}/revoke-role")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIIN')")
     public ResponseEntity<StudentResponse> revokeRole(@PathVariable String email) {
@@ -98,6 +124,9 @@ public class StudentController {
         return new ResponseEntity<>(studentResponse, HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Get student by email",
+            description = "This endpoint allows us to get student by an email")
     @GetMapping("/{email}")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<StudentResponse> getStudentByEmail(@PathVariable String email) {
@@ -107,6 +136,10 @@ public class StudentController {
         return new ResponseEntity<>(studentResponse, HttpStatus.OK);
     }
 
+
+    @Operation(
+            summary = "Delete Student",
+            description = "This endpoints allows the president or the admin delete a student using their student email")
     @DeleteMapping("/{email}")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN')")
     public ResponseEntity<Void> deleteStudent(@PathVariable String email) {
@@ -135,6 +168,10 @@ public class StudentController {
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
+
+    @Operation(
+            summary = "Get students by Programme",
+            description = "This endpoints allow us to sort students by they Programme")
     @GetMapping("/programme")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY','ADMIN')")
     public ResponseEntity<List<StudentResponse>> getStudentsByProgramme(
@@ -148,6 +185,10 @@ public class StudentController {
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
 
+
+    @Operation(
+            summary = "Students by Programme and Payment Status",
+            description = "We sort us students using their programme and their payment status")
     @GetMapping("/programme/payment-status")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY','ADMIN')")
     public ResponseEntity<List<StudentResponse>> getStudentsByProgrammeAndPaymentStatus(

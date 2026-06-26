@@ -1,6 +1,7 @@
 package com.boyboys.dues_payment_system.payment.domain;
 
 import com.boyboys.dues_payment_system.student.Student;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,10 +19,12 @@ import java.util.List;
 @RequestMapping("/api/v1/payments")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Payments  ", description = "Endpoints to enable Payments")
 public class TransactionController {
 
     private final TransactionService paymentService;
 
+    @Tag(name = "Initialize Payments", description = "This endpoint enable initialization of payments")
     @PostMapping("/initialize")
     @PreAuthorize("hasAnyAuthority('STUDENT','PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<InitializePaymentResponse> initializePayment(
@@ -32,6 +35,7 @@ public class TransactionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Tag(name = "Webhook", description = "Endpoints to validate payments from Paystack")
     @PostMapping("/webhook")
     public ResponseEntity<Void> handleWebhook(
             @RequestBody byte[] payload,
@@ -42,6 +46,7 @@ public class TransactionController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @Tag(name = "Payment Status ", description = "Getting the Payment status of a payment using payment reference")
     @GetMapping("/status/{reference}")
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<TransactionStatusResponse> getPaymentStatus(@PathVariable String reference) {
@@ -50,6 +55,7 @@ public class TransactionController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Tag(name = "All Transactions  ", description = "Endpoints to get all transactions")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<List<TransactionResponse>> getAllTransactions(@RequestParam(defaultValue = "0") int page,
@@ -60,7 +66,9 @@ public class TransactionController {
         return new ResponseEntity<>(transactions, HttpStatus.OK);
     }
 
+    @Tag(name = "Individual Transaction  ", description = "Endpoints to get individual Transactions made")
     @GetMapping("/student")
+    @PreAuthorize("hasAnyAuthority('STUDENT','PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<List<TransactionResponse>> getStudentTransactions(
             @AuthenticationPrincipal Student student) {
         log.info("Getting transactions for student: {}", student.getEmail());
