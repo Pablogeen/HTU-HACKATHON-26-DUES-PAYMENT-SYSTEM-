@@ -1,10 +1,11 @@
 package com.boyboys.dues_payment_system.payment.domain;
 
-import com.boyboys.dues_payment_system.student.StudentRepository;
+import com.boyboys.dues_payment_system.payment.PaymentException;
+import com.boyboys.dues_payment_system.payment.Transaction;
+import com.boyboys.dues_payment_system.payment.TransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

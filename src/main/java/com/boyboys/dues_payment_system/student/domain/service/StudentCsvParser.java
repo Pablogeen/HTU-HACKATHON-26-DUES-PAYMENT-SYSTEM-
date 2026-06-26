@@ -2,7 +2,7 @@ package com.boyboys.dues_payment_system.student.domain.service;
 
 
 import com.boyboys.dues_payment_system.student.Programme;
-import com.boyboys.dues_payment_system.student.domain.Level;
+import com.boyboys.dues_payment_system.student.Level;
 import com.boyboys.dues_payment_system.student.domain.Role;
 import com.boyboys.dues_payment_system.student.Student;
 import com.boyboys.dues_payment_system.student.PaymentStatus;

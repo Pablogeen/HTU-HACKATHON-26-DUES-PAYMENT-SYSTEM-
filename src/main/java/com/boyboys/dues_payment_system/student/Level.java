@@ -1,4 +1,4 @@
-package com.boyboys.dues_payment_system.student.domain;
+package com.boyboys.dues_payment_system.student;
 
 public enum Level {
     L100,

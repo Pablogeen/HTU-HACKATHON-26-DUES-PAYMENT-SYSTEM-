@@ -24,4 +24,19 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     Page<Student> findByProgrammeAndPaymentStatus(Programme programme, PaymentStatus paymentStatus, Pageable pageable);
 
     List<Student> findAllByPaymentStatus(PaymentStatus paymentStatus);
+
+    long countByProgramme(Programme programme);
+
+    long countByProgrammeAndPaymentStatus(Programme programme, PaymentStatus paymentStatus);
+
+    long countByPaymentStatus(PaymentStatus paymentStatus);
+
+    long countByLevel(Level level);
+
+    long countByProgrammeAndLevel(Programme programme, Level level);
+
+    long countByLevelAndPaymentStatus(Level level, PaymentStatus paymentStatus);
+    long countByProgrammeAndLevelAndPaymentStatus(Programme programme, Level level, PaymentStatus paymentStatus);
+
+
 }

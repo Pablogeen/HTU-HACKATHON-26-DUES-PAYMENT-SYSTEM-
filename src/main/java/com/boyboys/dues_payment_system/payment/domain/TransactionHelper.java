@@ -1,6 +1,9 @@
 package com.boyboys.dues_payment_system.payment.domain;
 
 import com.boyboys.dues_payment_system.payment.PaymentSucceededEvent;
+import com.boyboys.dues_payment_system.payment.Transaction;
+import com.boyboys.dues_payment_system.payment.TransactionRepository;
+import com.boyboys.dues_payment_system.payment.TransactionStatus;
 import com.boyboys.dues_payment_system.student.PaymentStatus;
 import com.boyboys.dues_payment_system.student.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +13,6 @@ import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Component
 @Slf4j

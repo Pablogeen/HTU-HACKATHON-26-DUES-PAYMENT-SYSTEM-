@@ -1,6 +1,6 @@
 package com.boyboys.dues_payment_system.payment.domain;
 
-import com.boyboys.dues_payment_system.payment.PaymentSucceededEvent;
+import com.boyboys.dues_payment_system.payment.*;
 import com.boyboys.dues_payment_system.student.PaymentStatus;
 import com.boyboys.dues_payment_system.student.Student;
 import com.boyboys.dues_payment_system.student.StudentRepository;

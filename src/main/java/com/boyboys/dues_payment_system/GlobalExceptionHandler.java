@@ -1,6 +1,6 @@
 package com.boyboys.dues_payment_system;
 
-import com.boyboys.dues_payment_system.payment.domain.PaymentException;
+import com.boyboys.dues_payment_system.payment.PaymentException;
 import com.boyboys.dues_payment_system.student.StudentNotFoundException;
 import com.boyboys.dues_payment_system.student.domain.exception.*;
 import lombok.extern.slf4j.Slf4j;

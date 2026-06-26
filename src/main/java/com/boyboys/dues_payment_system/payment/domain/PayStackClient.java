@@ -1,5 +1,6 @@
 package com.boyboys.dues_payment_system.payment.domain;
 
+import com.boyboys.dues_payment_system.payment.PaymentException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;

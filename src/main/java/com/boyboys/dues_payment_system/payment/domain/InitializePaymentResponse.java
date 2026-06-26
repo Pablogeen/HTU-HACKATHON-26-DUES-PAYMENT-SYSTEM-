@@ -1,5 +1,6 @@
 package com.boyboys.dues_payment_system.payment.domain;
 
+import com.boyboys.dues_payment_system.payment.TransactionStatus;
 import lombok.Builder;
 import lombok.Data;
 

@@ -1,4 +1,4 @@
-package com.boyboys.dues_payment_system.payment.domain;
+package com.boyboys.dues_payment_system.payment;
 
 import com.boyboys.dues_payment_system.student.Student;
 import jakarta.persistence.*;

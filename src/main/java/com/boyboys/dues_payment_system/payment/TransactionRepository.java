@@ -1,5 +1,6 @@
-package com.boyboys.dues_payment_system.payment.domain;
+package com.boyboys.dues_payment_system.payment;
 
+import com.boyboys.dues_payment_system.student.Programme;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,10 +19,18 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     boolean existsByStudentIdAndStatus(Long studentId, TransactionStatus status);
 
-    List<Transaction> findByStatus(TransactionStatus status);
 
     Optional<Transaction> findByStudentIdAndStatus(Long studentId, TransactionStatus status);
 
     @Query("SELECT t FROM Transaction t WHERE t.status = 'PENDING' AND t.createdAt < :threshold")
     List<Transaction> findPendingTransactionsOlderThan(@Param("threshold") LocalDateTime threshold);
+
+
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.status = 'PAID'")
+    Long sumPaidTransactions();
+
+    List<Transaction> findAllByStatus(TransactionStatus status);
+
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.status = 'PAID' AND t.student.programme = :programme")
+    Long sumPaidTransactionsByProgramme(@Param("programme") Programme programme);
 }

@@ -1,7 +1,7 @@
 package com.boyboys.dues_payment_system.student.domain.dto;
 
 import com.boyboys.dues_payment_system.student.Programme;
-import com.boyboys.dues_payment_system.student.domain.Level;
+import com.boyboys.dues_payment_system.student.Level;
 import com.boyboys.dues_payment_system.student.domain.Qualification;
 import com.boyboys.dues_payment_system.student.PaymentStatus;
 import lombok.Data;

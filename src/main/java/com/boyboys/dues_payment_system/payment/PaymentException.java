@@ -1,4 +1,4 @@
-package com.boyboys.dues_payment_system.payment.domain;
+package com.boyboys.dues_payment_system.payment;
 
 public class PaymentException extends RuntimeException{
 
