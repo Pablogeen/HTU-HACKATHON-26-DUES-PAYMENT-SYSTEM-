@@ -27,7 +27,7 @@ public class ReceiptController {
             summary = "Download Receipts",
             description = "Downloads receipts")
     @GetMapping("/{reference}")
-    @PreAuthorize("hasAnyAuthority('STUDENT,''PRESIDENT','FINANCIAL_SECRETARY')")
+    @PreAuthorize("hasAnyAuthority('STUDENT','PRESIDENT','FINANCIAL_SECRETARY')")
     public ResponseEntity<byte[]> downloadReceipt(@PathVariable String reference) {
         log.info("Receipt download request for reference: {}", reference);
         byte[] receipt = receiptService.downloadReceipt(reference);
