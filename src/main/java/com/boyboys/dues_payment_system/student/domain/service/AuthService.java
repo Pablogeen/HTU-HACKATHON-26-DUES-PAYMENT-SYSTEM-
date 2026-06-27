@@ -108,6 +108,8 @@ public class AuthService {
     @Transactional
     public String resendVerificationToken(String email) {
         log.info("About to make cal to resend token");
+
+        //Pessimistic locks here
         Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("STUDENT NOT FOUND"));
 
@@ -132,7 +134,7 @@ public class AuthService {
     public AuthResponse refresh(RefreshTokenRequest request) {
 
          //Pessemistic locks here
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(request.getRefreshToken())
+        RefreshToken refreshToken = refreshTokenRepository.findByTokenWithLock(request.getRefreshToken())
                 .orElseThrow(() -> new InvalidTokenException("Invalid refresh token"));
 
         if (refreshToken.isRevoked()) {
@@ -173,7 +175,8 @@ public class AuthService {
 
     @Transactional
     public String logout(String token) {
-        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
+         //Pessimistic locks here
+        RefreshToken refreshToken = refreshTokenRepository.findByTokenWithLock(token)
                 .orElseThrow(() -> new InvalidTokenException("Invalid refresh token"));
         refreshToken.setRevoked(true);
         refreshTokenRepository.save(refreshToken);
