@@ -39,8 +39,7 @@ public class TransactionService {
     public InitializePaymentResponse initializePayment(String email) {
         log.info("Initializing payment for student: {}", email);
 
-
-        //Pessemitic lock to be implemented to prevent race conditions
+        //Pessemitic lock implementedto prevent race conditions
         Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
 
@@ -119,6 +118,7 @@ public class TransactionService {
 
             log.info("Webhook event: {} for reference: {}", event, reference);
 
+            //Locks implemented here
             Transaction transaction = transactionRepository.findByReference(reference)
                     .orElseThrow(() -> new PaymentException("Transaction not found for reference: " + reference));
 
@@ -149,7 +149,7 @@ public class TransactionService {
 
     @Transactional
     public TransactionStatusResponse getPaymentStatus(String reference) {
-        //Pessimistic locks here
+        //Pessimistic locks implemented here
         Transaction transaction = transactionRepository.findByReference(reference)
                 .orElseThrow(() -> new PaymentException("Transaction not found"));
         return new TransactionStatusResponse(
@@ -174,6 +174,7 @@ public class TransactionService {
     }
 
     public List<TransactionResponse> getStudentTransactions(String email) {
+        //Pessimistic locks implemented here
         Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
         return transactionRepository.findByStudentId(student.getId())

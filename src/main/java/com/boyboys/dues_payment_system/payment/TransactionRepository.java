@@ -1,7 +1,9 @@
 package com.boyboys.dues_payment_system.payment;
 
 import com.boyboys.dues_payment_system.student.Programme;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -13,6 +15,7 @@ import java.util.Optional;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     Optional<Transaction> findByReference(String reference);
 
     List<Transaction> findByStudentId(Long studentId);
