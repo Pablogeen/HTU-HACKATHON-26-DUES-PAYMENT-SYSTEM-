@@ -7,6 +7,7 @@ import com.boyboys.dues_payment_system.student.StudentRepository;
 import com.boyboys.dues_payment_system.student.StudentNotFoundException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.micrometer.core.instrument.Counter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,9 @@ public class TransactionService {
     private final PayStackClient paystackClient;
     private final WebhookHelper webhookHelper;
     private final ObjectMapper objectMapper;
+    private final Counter paymentInitializedCounter;
+    private final Counter paymentSucceededCounter;
+    private final Counter paymentFailedCounter;
 
     @Value("${paystack.callback.url}")
     private String callbackUrl;
@@ -85,6 +89,7 @@ public class TransactionService {
 
         transactionRepository.save(transaction);
         log.info("Transaction saved successfully for student: {}", email);
+        paymentInitializedCounter.increment();
 
         return InitializePaymentResponse.builder()
                 .authorizationUrl(paystackResponse.getData().getAuthorizationUrl())
@@ -130,13 +135,14 @@ public class TransactionService {
                     transaction.getStudent().setPaymentStatus(PaymentStatus.PAID);
                     studentRepository.save(transaction.getStudent());
                     log.info("Payment successful for reference: {}", reference);
-
+                    paymentSucceededCounter.increment();
                     eventPublisher.publishEvent(new PaymentSucceededEvent(transaction.getStudent().getEmail(), transaction.getStudent().getFirstName(), reference));
                 }
                 case "charge.failed" -> {
                     transaction.setStatus(TransactionStatus.FAILED);
                     transactionRepository.save(transaction);
                     log.info("Payment failed for reference: {}", reference);
+                    paymentFailedCounter.increment();
                 }
                 default -> log.info("Unhandled webhook event: {}", event);
             }

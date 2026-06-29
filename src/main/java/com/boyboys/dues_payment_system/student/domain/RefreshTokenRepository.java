@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Optional<RefreshToken> findByTokenWithLock(String token);
+    Optional<RefreshToken> findByToken(String token);
 
     @Query("SELECT rt FROM RefreshToken rt WHERE rt.student.id = :studentId AND rt.revoked = false AND rt.expires > :now")
     Optional<RefreshToken> findActiveTokenByStudentId(@Param("studentId") Long studentId, @Param("now") LocalDateTime now);

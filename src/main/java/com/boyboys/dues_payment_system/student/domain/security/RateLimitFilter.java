@@ -75,16 +75,16 @@ public class RateLimitFilter extends OncePerRequestFilter{
     }
 
     private BucketConfiguration getBucketConfig(String path) {
-        if (path.equals("/api/v1/auth")) {
+        if (path.startsWith("/api/v1/auth")) {
             return rateLimitConfig.authConfig();
-        } else if (path.equals("/api/v1/students")) {
+        } else if (path.startsWith("/api/v1/students")) {
             return rateLimitConfig.studentsConfig();
-        } else if (path.equals("/api/v1/receipts")) {
-            return rateLimitConfig.receiptsConfig();
-        } else if (path.equals("/api/v1/reports")) {
-        return rateLimitConfig.reportsConfig();
-      }else if (path.equals("/api/v1/auth/payments")) {
+        } else if (path.startsWith("/api/v1/payments")) {
             return rateLimitConfig.paymentsConfig();
+        } else if (path.startsWith("/api/v1/receipts")) {
+            return rateLimitConfig.receiptsConfig();
+        } else if (path.startsWith("/api/v1/reports")) {
+            return rateLimitConfig.reportsConfig();
         }
         return null;
     }

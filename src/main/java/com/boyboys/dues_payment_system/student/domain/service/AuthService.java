@@ -11,6 +11,7 @@ import com.boyboys.dues_payment_system.student.domain.dto.LoginRequest;
 import com.boyboys.dues_payment_system.student.domain.dto.RefreshTokenRequest;
 import com.boyboys.dues_payment_system.student.domain.exception.*;
 import com.boyboys.dues_payment_system.student.domain.security.JwtHelper;
+import io.micrometer.core.instrument.Counter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +33,14 @@ public class AuthService {
         private final ConfirmationTokenHelper tokenHelper;
         private final ConfirmationTokenService tokenService;
         private final RefreshTokenRepository refreshTokenRepository;
+        private final Counter otpSentCounter;
+        private final Counter otpVerifiedCounter;
 
 
-     @Transactional
+
+
+    @Transactional
     public String login(LoginRequest request) {
-         //Pessimistic locks here
             Student student = studentRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new StudentNotFoundException("No account found with this email"));
             log.info("Gotten the user from the db");
@@ -50,6 +54,7 @@ public class AuthService {
 
             String token = tokenHelper.saveConfirmationToken(student);
             log.info("Token has been saved");
+            otpSentCounter.increment();
 
             //Event will be published to send email
             eventPublisher.publishEvent(new StudentLoginEvent(student.getEmail(), student.getFirstName(), token));
@@ -60,7 +65,6 @@ public class AuthService {
     @Transactional
     public AuthResponse verify(ConfirmationTokenRequest request) {
 
-         //Pessimistic locks here
             Student student = studentRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new StudentNotFoundException("NO ACCOUNT FOUND WITH THIS STUDENT EMAIL"));
 
@@ -80,6 +84,7 @@ public class AuthService {
 
             confirmationToken.setConfirmedAt(LocalDateTime.now());
             confirmationTokenRepository.save(confirmationToken);
+            otpVerifiedCounter.increment();
 
             refreshTokenRepository.revokeAllStudentTokens(student.getId());
 
@@ -109,7 +114,6 @@ public class AuthService {
     public String resendVerificationToken(String email) {
         log.info("About to make cal to resend token");
 
-        //Pessimistic locks here
         Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("STUDENT NOT FOUND"));
 
@@ -133,8 +137,7 @@ public class AuthService {
     @Transactional
     public AuthResponse refresh(RefreshTokenRequest request) {
 
-         //Pessemistic locks here
-        RefreshToken refreshToken = refreshTokenRepository.findByTokenWithLock(request.getRefreshToken())
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(request.getRefreshToken())
                 .orElseThrow(() -> new InvalidTokenException("Invalid refresh token"));
 
         if (refreshToken.isRevoked()) {
@@ -175,8 +178,7 @@ public class AuthService {
 
     @Transactional
     public String logout(String token) {
-         //Pessimistic locks here
-        RefreshToken refreshToken = refreshTokenRepository.findByTokenWithLock(token)
+        RefreshToken refreshToken = refreshTokenRepository.findByToken(token)
                 .orElseThrow(() -> new InvalidTokenException("Invalid refresh token"));
         refreshToken.setRevoked(true);
         refreshTokenRepository.save(refreshToken);

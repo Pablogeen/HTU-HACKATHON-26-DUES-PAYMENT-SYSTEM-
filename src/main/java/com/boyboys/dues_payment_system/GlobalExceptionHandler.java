@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> genericException(Exception e, WebRequest request) {
         log.error("Generic error");
         ErrorDetails details = new ErrorDetails(
-                e.getMessage(),
+                "Something Went Wrong...",
                 "INTERNAL SERVER ERROR",
                 request.getDescription(false),
                 LocalDateTime.now());
@@ -89,17 +89,17 @@ public class GlobalExceptionHandler {
     }
 
 
-//    @ExceptionHandler(AccessDeniedException.class)
-//    public ResponseEntity<?> accessDeniedException(AccessDeniedException e, WebRequest request) {
-//        log.error("Access Denied Exception");
-//        ErrorDetails details = new ErrorDetails(
-//                e.getMessage(),
-//                "UNAUTHORIZED",
-//                request.getDescription(false),
-//                LocalDateTime.now());
-//        return new ResponseEntity<>(details, HttpStatus.FORBIDDEN);
-//
-//    }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> accessDeniedException(AccessDeniedException e, WebRequest request) {
+        log.error("Access Denied Exception");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "UNAUTHORIZED",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.FORBIDDEN);
+
+    }
 
     @ExceptionHandler(TokenNotFoundException.class)
     public ResponseEntity<?> tokenNotFoundException(TokenNotFoundException e, WebRequest request) {

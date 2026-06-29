@@ -3,11 +3,14 @@ package com.boyboys.dues_payment_system.student.domain.service;
 
 import com.boyboys.dues_payment_system.student.Programme;
 import com.boyboys.dues_payment_system.student.Level;
+import com.boyboys.dues_payment_system.student.domain.Qualification;
 import com.boyboys.dues_payment_system.student.domain.Role;
 import com.boyboys.dues_payment_system.student.Student;
 import com.boyboys.dues_payment_system.student.PaymentStatus;
 import com.boyboys.dues_payment_system.student.domain.dto.CsvParseResult;
 import com.boyboys.dues_payment_system.student.domain.exception.InvalidFileException;
+import io.micrometer.core.instrument.Counter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,7 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class StudentCsvParser {
+
+    private final Counter studentImportedCounter;
 
     private static final long MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
     private static final List<String> VALID_LEVELS = List.of("L100", "L200", "L300", "L400");
@@ -44,37 +50,23 @@ public class StudentCsvParser {
                 totalRows++;
                 String[] columns = line.split(",");
 
-                if (columns.length != 8) {
+                if (columns.length != 9) {
                     skippedReasons.add("Row " + totalRows + ": Invalid number of columns");
                     continue;
                 }
 
-                String firstName = columns[0].trim();
-                String middleName = columns[1].trim();
-                String lastName = columns[2].trim();
-                String email = columns[3].trim();
-                String phoneNumber = columns[4].trim();
-                String levelStr = columns[5].trim();
-                String qualification = columns[6].trim();
-                String academicYear = columns[7].trim();
-                String programmeStr = columns[8].trim();
+                String firstName = sanitizeCsvField(columns[0].trim());
+                String middleName = sanitizeCsvField(columns[1].trim());
+                String lastName = sanitizeCsvField(columns[2].trim());
+                String email = sanitizeCsvField(columns[3].trim());
+                String phoneNumber = sanitizeCsvField(columns[4].trim());
+                String levelStr = sanitizeCsvField(columns[5].trim());
+                String qualification = sanitizeCsvField(columns[6].trim());
+                String academicYear = sanitizeCsvField(columns[7].trim());
+                String programmeStr = sanitizeCsvField(columns[8].trim());
 
-
-                Programme programme;
-                try {
-                    programme = Programme.valueOf(programmeStr.toUpperCase());
-                } catch (IllegalArgumentException e) {
-                    skippedReasons.add("Row " + totalRows + ": Invalid programme value - " + programmeStr);
-                    continue;
-                }
-
-                if (columns.length != 8) {
-                    skippedReasons.add("Row " + totalRows + ": Invalid number of columns");
-                    continue;
-                }
-
-                if (hasBlankFields(firstName, lastName, email, phoneNumber , levelStr, qualification,academicYear, programmeStr)) {
-                    skippedReasons.add("Row " + totalRows + ": One or more fields are blank");
+                if (hasBlankFields(firstName, lastName, email, phoneNumber, levelStr, qualification, academicYear, programmeStr)) {
+                    skippedReasons.add("Row " + totalRows + ": One or more required fields are blank");
                     continue;
                 }
 
@@ -120,6 +112,14 @@ public class StudentCsvParser {
                 }
 
 
+                Programme programme;
+                try {
+                    programme = Programme.valueOf(programmeStr.toUpperCase().replace(" ", "_"));
+                } catch (IllegalArgumentException e) {
+                    skippedReasons.add("Row " + totalRows + ": Invalid programme value - " + programmeStr);
+                    continue;
+                }
+
                 Student student = new Student();
                 student.setFirstName(firstName);
                 student.setMiddleName(middleName.isEmpty() ? null : middleName);
@@ -127,12 +127,14 @@ public class StudentCsvParser {
                 student.setEmail(email);
                 student.setPhoneNumber(phoneNumber);
                 student.setLevel(Level.valueOf(levelStr));
+                student.setQualificationType(Qualification.valueOf(qualification.toUpperCase()));
                 student.setRole(Role.STUDENT);
                 student.setPaymentStatus(PaymentStatus.UNPAID);
                 student.setAcademicYear(academicYear);
                 student.setProgramme(programme);
 
                 validUsers.add(student);
+                studentImportedCounter.increment();
             }
 
         } catch (IOException e) {
@@ -175,5 +177,14 @@ public class StudentCsvParser {
 
     private boolean isValidEmail(String email) {
         return email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
+    }
+
+    private String sanitizeCsvField(String value) {
+        if (value == null) return null;
+        if (value.startsWith("=") || value.startsWith("+") ||
+                value.startsWith("-") || value.startsWith("@")) {
+            value = "'" + value;
+        }
+        return value;
     }
 }
