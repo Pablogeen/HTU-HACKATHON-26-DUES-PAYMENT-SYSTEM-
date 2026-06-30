@@ -127,10 +127,10 @@ public class AuthService {
         String token = tokenHelper.saveConfirmationToken(student);
         log.info("ConfirmationToken has been saved in the db");
 
-    //    eventPublisher.publishEvent(new UserRegisteredEvent(user.getEmail(), token));
-      //  log.info("Event fired to resend verification token email");
+        eventPublisher.publishEvent(new StudentLoginEvent(student.getEmail(), student.getFirstName(), token));
+        log.info("Event fired to resend verification token email");
 
-        return "Email Sent";
+        return "EMAIL SENT FOR VERIFICATION";
 
     }
 
