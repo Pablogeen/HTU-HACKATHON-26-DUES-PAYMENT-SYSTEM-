@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Night Indigo — primary dark surface (sidebar, hero, auth) */
+  --color-brand-50: #eef1fb;
+  --color-brand-100: #dbe1f7;
+  --color-brand-200: #b3bdec;
+  --color-brand-300: #7c8ada;
+  --color-brand-400: #4a58bd;
+  --color-brand-500: #2c3690;
+  --color-brand-600: #1c2464;
+  --color-brand-700: #151b4d;
+  --color-brand-800: #10143b;
+  --color-brand-900: #0a0d29;
+
+  /* Circuit Teal — primary accent */
+  --color-teal-50: #ecfdfb;
+  --color-teal-100: #cffaf3;
+  --color-teal-300: #5ce0d0;
+  --color-teal-400: #22c7b3;
+  --color-teal-500: #14b8a6;
+  --color-teal-600: #0f9488;
+  --color-teal-700: #0b756c;
+
+  /* Kente Gold — celebratory / CTA accent */
+  --color-gold-100: #fef3c7;
+  --color-gold-300: #fcd34d;
+  --color-gold-400: #f9c40b;
+  --color-gold-500: #f4b400;
+  --color-gold-600: #c98f00;
+
+  /* Adinkra Crimson — danger / urgent accent */
+  --color-crimson-50: #fdecea;
+  --color-crimson-100: #fad4cf;
+  --color-crimson-500: #e1483d;
+  --color-crimson-600: #c23327;
+
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --shadow-soft: 0 1px 2px rgba(10, 13, 41, 0.04), 0 8px 24px -12px rgba(16, 20, 59, 0.18);
+  --shadow-lift: 0 12px 32px -8px rgba(16, 20, 59, 0.28);
+}
+
+body {
+  @apply bg-[#F7F8FC] text-[#171B34] antialiased;
+  font-family: var(--font-sans);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono-num {
+  font-family: var(--font-mono);
+  font-feature-settings: 'tnum' 1;
+}
+
+/* Signature device: a woven diamond + circuit-dot trace, used sparingly
+   as a strip accent — nods to kente weaving patterns and circuitry. */
+.weave-trace {
+  background-image:
+    radial-gradient(circle at 8px 8px, rgba(244, 180, 0, 0.55) 1.4px, transparent 1.6px),
+    linear-gradient(45deg, rgba(20, 184, 166, 0.35) 25%, transparent 25%, transparent 75%, rgba(20, 184, 166, 0.35) 75%),
+    linear-gradient(45deg, rgba(20, 184, 166, 0.35) 25%, transparent 25%, transparent 75%, rgba(20, 184, 166, 0.35) 75%);
+  background-size: 16px 16px, 16px 16px, 16px 16px;
+  background-position: 0 0, 0 0, 8px 8px;
+}
+
+.weave-trace-faint {
+  background-image:
+    radial-gradient(circle at 8px 8px, rgba(244, 180, 0, 0.28) 1.2px, transparent 1.4px),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.06) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.06) 75%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.06) 25%, transparent 25%, transparent 75%, rgba(255, 255, 255, 0.06) 75%);
+  background-size: 20px 20px, 20px 20px, 20px 20px;
+  background-position: 0 0, 0 0, 10px 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .animate-fade-up {
+    animation: fade-up 0.5s ease-out both;
+  }
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out both;
+  }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+::selection {
+  background: rgba(20, 184, 166, 0.25);
+}
