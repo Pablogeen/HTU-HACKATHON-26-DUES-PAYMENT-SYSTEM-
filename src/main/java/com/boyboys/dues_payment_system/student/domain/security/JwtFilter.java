@@ -35,7 +35,6 @@ public class JwtFilter extends OncePerRequestFilter {
         List<String> publicPaths = List.of(
                 "/api/v1/auth/login",
                 "/api/v1/auth/verify",
-                "/api/v1/students/register-student",
                 "/api/v1/auth/resend-verification",
                 "/api/v1/payments/webhook",
                 "/swagger-ui.html");

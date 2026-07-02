@@ -2,6 +2,7 @@ package com.boyboys.dues_payment_system.student.web;
 
 import com.boyboys.dues_payment_system.student.Programme;
 import com.boyboys.dues_payment_system.student.PaymentStatus;
+import com.boyboys.dues_payment_system.student.Student;
 import com.boyboys.dues_payment_system.student.domain.dto.ImportSummary;
 import com.boyboys.dues_payment_system.student.domain.dto.RegisterRequest;
 import com.boyboys.dues_payment_system.student.domain.dto.StudentResponse;
@@ -149,9 +150,9 @@ public class StudentController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<StudentResponse> getMe(@AuthenticationPrincipal UserDetails student) {
+    public ResponseEntity<StudentResponse> getMe(@AuthenticationPrincipal Student student) {
         log.info("Request made to view profile");
-        StudentResponse studentInfo = studentService.getMe(student.getUsername());
+        StudentResponse studentInfo = studentService.getMe(student.getEmail());
         return new ResponseEntity<>(studentInfo, HttpStatus.OK);
     }
 
