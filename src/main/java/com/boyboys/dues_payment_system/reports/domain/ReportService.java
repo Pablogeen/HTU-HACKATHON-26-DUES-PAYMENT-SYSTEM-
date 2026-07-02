@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -28,8 +29,7 @@ public class ReportService {
         long totalStudents = studentRepository.count();
         long totalPaid = studentRepository.countByPaymentStatus(PaymentStatus.PAID);
         long totalUnpaid = studentRepository.countByPaymentStatus(PaymentStatus.UNPAID);
-        Long totalAmountInPesewas = transactionRepository.sumPaidTransactions();
-        long totalAmountInCedis = totalAmountInPesewas != null ? totalAmountInPesewas / 100 : 0;
+        BigDecimal totalAmountCollected = transactionRepository.sumSuccessfulAmount().divide(BigDecimal.valueOf(100));
 
         List<ProgrammeSummary> programmeSummaries = Arrays.stream(Programme.values())
                 .map(programme -> new ProgrammeSummary(
@@ -54,7 +54,7 @@ public class ReportService {
                 totalStudents,
                 totalPaid,
                 totalUnpaid,
-                totalAmountInCedis,
+                totalAmountCollected,
                 programmeSummaries,
                 levelSummaries
         );
