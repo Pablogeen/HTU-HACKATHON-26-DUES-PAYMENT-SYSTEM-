@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> genericException(Exception e, WebRequest request) {
-        log.error("Generic error");
+        log.error("Generic error: {}",e.getMessage(), e);
         ErrorDetails details = new ErrorDetails(
                 "Something Went Wrong...",
                 "INTERNAL SERVER ERROR",

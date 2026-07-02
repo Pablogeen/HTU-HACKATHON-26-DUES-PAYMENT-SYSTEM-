@@ -4,6 +4,7 @@ import com.boyboys.dues_payment_system.payment.PaymentException;
 import com.boyboys.dues_payment_system.payment.Transaction;
 import com.boyboys.dues_payment_system.payment.TransactionRepository;
 import com.boyboys.dues_payment_system.payment.TransactionStatus;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ public class ReceiptService {
     private final TransactionRepository transactionRepository;
     private final ReceiptPdfGenerator receiptPdfGenerator;
 
+    @Transactional
     public byte[] downloadReceipt(String reference) {
         log.info("Receipt download request for reference: {}", reference);
         Transaction transaction = transactionRepository.findByReference(reference)
