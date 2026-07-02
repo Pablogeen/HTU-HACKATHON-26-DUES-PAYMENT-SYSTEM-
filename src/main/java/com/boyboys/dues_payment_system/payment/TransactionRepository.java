@@ -30,11 +30,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findPendingTransactionsOlderThan(@Param("threshold") LocalDateTime threshold);
 
 
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.status = 'SUCCESS'")
+    BigDecimal sumPaidTransactions();
+
     List<Transaction> findAllByStatus(TransactionStatus status);
 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.status = 'PAID' AND t.student.programme = :programme")
     Long sumPaidTransactionsByProgramme(@Param("programme") Programme programme);
 
-    @Query("SELECT COALESE(SUM(t.amount), 0) FROM Transaction t WHERE t.status = 'SUCCESS'")
-    BigDecimal sumSuccessfulAmount();
 }
