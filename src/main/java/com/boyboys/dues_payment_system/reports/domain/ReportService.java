@@ -29,7 +29,7 @@ public class ReportService {
         long totalStudents = studentRepository.count();
         long totalPaid = studentRepository.countByPaymentStatus(PaymentStatus.PAID);
         long totalUnpaid = studentRepository.countByPaymentStatus(PaymentStatus.UNPAID);
-        BigDecimal totalAmountCollected = transactionRepository.sumSuccessfulAmount().divide(BigDecimal.valueOf(100));
+        BigDecimal totalAmountCollected = transactionRepository.sumPaidTransactions().divide(BigDecimal.valueOf(100));
 
         List<ProgrammeSummary> programmeSummaries = Arrays.stream(Programme.values())
                 .map(programme -> new ProgrammeSummary(
