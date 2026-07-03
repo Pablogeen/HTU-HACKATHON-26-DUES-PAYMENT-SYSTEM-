@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { ShieldCheck, Sparkles, Wallet } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
@@ -9,10 +9,10 @@ import { HttpError } from '@/lib/utils';
 
 export function LoginPage() {
   const { login, isAuthenticated, isAdmin } = useAuth();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
 
   if (isAuthenticated) {
     return <Navigate to={isAdmin ? '/admin' : '/dashboard'} replace />;
@@ -21,11 +21,10 @@ export function LoginPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    setSuccess('');
     setLoading(true);
     try {
-      const message = await login(email.trim());
-      setSuccess(message || 'OTP sent to your email.');
+      await login(email.trim());
+      navigate('/verify');
     } catch (err) {
       setError(err instanceof HttpError ? err.message : 'Login failed. Please try again.');
     } finally {
@@ -104,17 +103,11 @@ export function LoginPage() {
             <p className="mt-1 text-sm text-slate-500">Use your student email to continue</p>
           </div>
 
-          <div className="mb-4 space-y-3">
-            {error && <Alert variant="error">{error}</Alert>}
-            {success && (
-              <Alert variant="success">
-                {success}{' '}
-                <Link to="/verify" className="font-semibold underline">
-                  Enter OTP
-                </Link>
-              </Alert>
-            )}
-          </div>
+          {error && (
+            <div className="mb-4">
+              <Alert variant="error">{error}</Alert>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <Input
@@ -130,15 +123,6 @@ export function LoginPage() {
               Send OTP
             </Button>
           </form>
-
-          {success && (
-            <p className="mt-4 text-center text-sm text-slate-500">
-              Already have a code?{' '}
-              <Link to="/verify" className="font-medium text-teal-600 hover:underline">
-                Verify OTP
-              </Link>
-            </p>
-          )}
         </div>
       </div>
     </div>

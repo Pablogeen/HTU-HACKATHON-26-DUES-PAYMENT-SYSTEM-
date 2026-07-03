@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,11 +30,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     List<Transaction> findPendingTransactionsOlderThan(@Param("threshold") LocalDateTime threshold);
 
 
-    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.status = 'PAID'")
-    Long sumPaidTransactions();
+    @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.status = 'SUCCESS'")
+    BigDecimal sumPaidTransactions();
 
     List<Transaction> findAllByStatus(TransactionStatus status);
 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.status = 'PAID' AND t.student.programme = :programme")
     Long sumPaidTransactionsByProgramme(@Param("programme") Programme programme);
+
 }
