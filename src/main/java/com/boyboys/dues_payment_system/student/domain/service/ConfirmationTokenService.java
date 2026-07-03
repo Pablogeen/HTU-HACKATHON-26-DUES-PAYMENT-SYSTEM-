@@ -1,7 +1,7 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
 import com.boyboys.dues_payment_system.student.domain.ConfirmationToken;
-import com.boyboys.dues_payment_system.student.domain.ConfirmationTokenRepository;
+import com.boyboys.dues_payment_system.student.ConfirmationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
