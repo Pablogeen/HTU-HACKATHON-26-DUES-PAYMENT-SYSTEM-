@@ -87,13 +87,6 @@ public class StudentService {
         return modelMapper.map(savedStudent, StudentResponse.class);
     }
 
-    public StudentResponse getStudentById(Long id) {
-        Student student = studentRepository.findById(id)
-                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
-        log.info("Got student from db");
-        return modelMapper.map(student, StudentResponse.class);
-    }
-
     @Transactional
     public StudentResponse updateStudent(String email, UpdateStudentRequest request) {
         Student student = studentRepository.findByEmail(email)
