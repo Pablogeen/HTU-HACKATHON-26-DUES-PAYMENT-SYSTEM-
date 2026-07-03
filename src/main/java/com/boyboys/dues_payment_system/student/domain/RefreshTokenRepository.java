@@ -1,5 +1,6 @@
 package com.boyboys.dues_payment_system.student.domain;
 
+import com.boyboys.dues_payment_system.student.Student;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -23,4 +24,6 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
     @Modifying
     @Query("UPDATE RefreshToken rt SET rt.revoked = true WHERE rt.student.id = :studentId")
     void revokeAllStudentTokens(@Param("studentId") Long studentId);
+
+    void deleteByStudent(Student student);
 }

@@ -1,6 +1,7 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
 import com.boyboys.dues_payment_system.student.*;
+import com.boyboys.dues_payment_system.student.domain.RefreshTokenRepository;
 import com.boyboys.dues_payment_system.student.domain.Role;
 import com.boyboys.dues_payment_system.student.domain.dto.*;
 import com.boyboys.dues_payment_system.student.domain.exception.EmailAlreadyExistException;
@@ -23,6 +24,7 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final StudentCsvParser studentCsvParser;
     private final ModelMapper modelMapper;
 
@@ -98,7 +100,9 @@ public class StudentService {
     public void deleteStudent(String email) {
         Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+        refreshTokenRepository.deleteByStudent(student);
         confirmationTokenRepository.deleteByStudent(student);
+
         studentRepository.delete(student);
     }
 
