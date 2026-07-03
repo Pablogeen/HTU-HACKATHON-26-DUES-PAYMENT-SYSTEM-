@@ -75,19 +75,6 @@ public class StudentController {
 
 
     @Operation(
-            summary = "Get Student Id",
-            description = "Get student by the id(Not student email)")
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY','ADMIN')")
-    public ResponseEntity<StudentResponse> getStudentById(@PathVariable Long id) {
-        log.info("Getting student by id: ",id);
-        StudentResponse studentResponse = studentService.getStudentById(id);
-        log.info("Student gotten by id {}",studentResponse.getEmail());
-        return new ResponseEntity<>(studentResponse, HttpStatus.OK);
-    }
-
-
-    @Operation(
             summary = "Update students ",
             description = "Updates students by student emails")
     @PutMapping("/{email}")

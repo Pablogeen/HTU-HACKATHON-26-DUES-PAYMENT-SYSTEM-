@@ -45,5 +45,9 @@ This module handles events published by other modules and send notifications to 
 * Integration
 * Feature Branches...
 
+## URL
+* **Frontend**: https://payment-system-ten-chi.vercel.app
+* **Backend Api Docs** https://htu-hackathon-26-dues-payment-system.onrender.com/swagger-ui.html
+
 [Architecture-Design-Record(ADR)](docs/Architecture-Design-Records(ADR).md)
 
