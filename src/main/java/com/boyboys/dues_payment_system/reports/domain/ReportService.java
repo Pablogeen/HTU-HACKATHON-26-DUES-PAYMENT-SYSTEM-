@@ -36,7 +36,8 @@ public class ReportService {
                         programme.name(),
                         studentRepository.countByProgramme(programme),
                         studentRepository.countByProgrammeAndPaymentStatus(programme, PaymentStatus.PAID),
-                        studentRepository.countByProgrammeAndPaymentStatus(programme, PaymentStatus.UNPAID)
+                        studentRepository.countByProgrammeAndPaymentStatus(programme, PaymentStatus.UNPAID),
+                        transactionRepository.sumAmountByProgramme(programme)
                 ))
                 .toList();
 

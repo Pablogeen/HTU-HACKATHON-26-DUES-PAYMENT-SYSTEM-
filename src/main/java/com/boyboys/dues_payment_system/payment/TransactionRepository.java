@@ -38,4 +38,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     @Query("SELECT SUM(t.amount) FROM Transaction t WHERE t.status = 'PAID' AND t.student.programme = :programme")
     Long sumPaidTransactionsByProgramme(@Param("programme") Programme programme);
 
+    @Query("""
+        SELECT SUM(t.amount) FROM Transaction t JOIN t.student s WHERE
+        t.status='SUCCESS' AND s.programme =:programme""")
+    BigDecimal sumAmountByProgramme(@Param("programme") Programme programme);
+
 }
