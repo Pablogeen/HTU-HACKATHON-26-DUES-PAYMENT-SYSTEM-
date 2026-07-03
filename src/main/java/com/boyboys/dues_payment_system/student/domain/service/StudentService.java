@@ -91,10 +91,10 @@ public class StudentService {
     public StudentResponse updateStudent(String email, UpdateStudentRequest request) {
         Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
-   Student mappedStudent = modelMapper.map(request, Student.class);
-        studentRepository.save(mappedStudent);
+        modelMapper.map(request, student);
+        Student savedStudent = studentRepository.save(student);
         log.info("Student details updated");
-        return modelMapper.map(student, StudentResponse.class);
+        return modelMapper.map(savedStudent, StudentResponse.class);
     }
 
     @Transactional

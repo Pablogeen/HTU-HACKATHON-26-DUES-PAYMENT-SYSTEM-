@@ -39,7 +39,7 @@ public class StudentController {
             summary = "Import Students",
             description = "Allows the importation of students using a .csv file")
     @PostMapping("/import")
-    @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN')")
     public ResponseEntity<ImportSummary> importStudents(@RequestParam("file") MultipartFile file) {
         log.info("Request made to import students into the db");
         ImportSummary summary = studentService.importStudents(file);
