@@ -205,6 +205,9 @@ export function StudentsPage() {
                       {canManageStudents && (
                         <td className="py-3 pr-3">
                           <div className="flex flex-wrap gap-1">
+                            <Link to={`/admin/students/${encodeURIComponent(s.email)}/edit`}>
+                              <Button variant="ghost">Edit</Button>
+                            </Link>
                             <Button
                               variant="ghost"
                               loading={actionLoading === `assign-${s.email}`}
