@@ -1,13 +1,9 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
-import com.boyboys.dues_payment_system.student.Programme;
+import com.boyboys.dues_payment_system.student.*;
 import com.boyboys.dues_payment_system.student.domain.Role;
-import com.boyboys.dues_payment_system.student.Student;
-import com.boyboys.dues_payment_system.student.PaymentStatus;
-import com.boyboys.dues_payment_system.student.StudentRepository;
 import com.boyboys.dues_payment_system.student.domain.dto.*;
 import com.boyboys.dues_payment_system.student.domain.exception.EmailAlreadyExistException;
-import com.boyboys.dues_payment_system.student.StudentNotFoundException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +22,7 @@ import java.util.List;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
     private final StudentCsvParser studentCsvParser;
     private final ModelMapper modelMapper;
 
@@ -99,9 +96,10 @@ public class StudentService {
 
     @Transactional
     public void deleteStudent(String email) {
-        Student user = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmail(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
-        studentRepository.delete(user);
+        confirmationTokenRepository.deleteByStudent(student);
+        studentRepository.delete(student);
     }
 
     public StudentResponse getMe(String email) {

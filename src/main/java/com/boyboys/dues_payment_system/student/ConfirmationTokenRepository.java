@@ -1,5 +1,6 @@
-package com.boyboys.dues_payment_system.student.domain;
+package com.boyboys.dues_payment_system.student;
 
+import com.boyboys.dues_payment_system.student.domain.ConfirmationToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -22,5 +23,7 @@ public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationT
 
     @Query("SELECT ct FROM ConfirmationToken ct WHERE ct.student.id = :studentId AND ct.confirmedAt IS NULL AND ct.expiresAt > :now")
     Optional<ConfirmationToken> findActiveTokenByStudentId(@Param("studentId") Long studentId, @Param("now") LocalDateTime now);
+
+    void deleteByStudent(Student student);
 }
 
