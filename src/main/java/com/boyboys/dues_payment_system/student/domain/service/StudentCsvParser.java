@@ -1,6 +1,5 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
-
 import com.boyboys.dues_payment_system.student.Programme;
 import com.boyboys.dues_payment_system.student.Level;
 import com.boyboys.dues_payment_system.student.domain.Qualification;
@@ -18,7 +17,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -30,6 +31,11 @@ public class StudentCsvParser {
     private static final List<String> VALID_LEVELS = List.of("L100", "L200", "L300", "L400");
     private static final List<String> VALID_CONTENT_TYPES = List.of("text/csv", "application/vnd.ms-excel");
 
+    private static final List<String> REQUIRED_HEADERS = List.of(
+            "firstname", "middlename", "lastname", "email", "phonenumber",
+            "level", "qualification", "academicyear", "programme"
+    );
+
     public CsvParseResult parse(MultipartFile file) {
         validateFile(file);
 
@@ -38,32 +44,32 @@ public class StudentCsvParser {
         int totalRows = 0;
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream()))) {
-            String line;
-            boolean isHeader = true;
+            String headerLine = reader.readLine();
+            if (headerLine == null || headerLine.isBlank()) {
+                throw new InvalidFileException("CSV file is missing a header row");
+            }
 
+            Map<String, Integer> headerIndex = buildHeaderIndex(headerLine);
+            validateHeaders(headerIndex);
+
+            String line;
             while ((line = reader.readLine()) != null) {
-                if (isHeader) {
-                    isHeader = false;
+                if (line.isBlank()) {
                     continue;
                 }
 
                 totalRows++;
-                String[] columns = line.split(",");
+                String[] columns = line.split(",", -1);
 
-                if (columns.length != 9) {
-                    skippedReasons.add("Row " + totalRows + ": Invalid number of columns");
-                    continue;
-                }
-
-                String firstName = sanitizeCsvField(columns[0].trim());
-                String middleName = sanitizeCsvField(columns[1].trim());
-                String lastName = sanitizeCsvField(columns[2].trim());
-                String email = sanitizeCsvField(columns[3].trim());
-                String phoneNumber = sanitizeCsvField(columns[4].trim());
-                String levelStr = sanitizeCsvField(columns[5].trim());
-                String qualification = sanitizeCsvField(columns[6].trim());
-                String academicYear = sanitizeCsvField(columns[7].trim());
-                String programmeStr = sanitizeCsvField(columns[8].trim());
+                String firstName = getColumn(columns, headerIndex, "firstname");
+                String middleName = getColumn(columns, headerIndex, "middlename");
+                String lastName = getColumn(columns, headerIndex, "lastname");
+                String email = getColumn(columns, headerIndex, "email");
+                String phoneNumber = getColumn(columns, headerIndex, "phonenumber");
+                String levelStr = getColumn(columns, headerIndex, "level");
+                String qualification = getColumn(columns, headerIndex, "qualification");
+                String academicYear = getColumn(columns, headerIndex, "academicyear");
+                String programmeStr = getColumn(columns, headerIndex, "programme");
 
                 if (hasBlankFields(firstName, lastName, email, phoneNumber, levelStr, qualification, academicYear, programmeStr)) {
                     skippedReasons.add("Row " + totalRows + ": One or more required fields are blank");
@@ -111,7 +117,6 @@ public class StudentCsvParser {
                     continue;
                 }
 
-
                 Programme programme;
                 try {
                     programme = Programme.valueOf(programmeStr.toUpperCase().replace(" ", "_"));
@@ -142,6 +147,36 @@ public class StudentCsvParser {
         }
 
         return new CsvParseResult(totalRows, validUsers, skippedReasons);
+    }
+
+    private Map<String, Integer> buildHeaderIndex(String headerLine) {
+        String[] headers = headerLine.split(",", -1);
+        Map<String, Integer> index = new HashMap<>();
+        for (int i = 0; i < headers.length; i++) {
+            String key = headers[i].trim().toLowerCase().replace(" ", "");
+            index.put(key, i);
+        }
+        return index;
+    }
+
+    private void validateHeaders(Map<String, Integer> headerIndex) {
+        List<String> missing = new ArrayList<>();
+        for (String required : REQUIRED_HEADERS) {
+            if (!headerIndex.containsKey(required)) {
+                missing.add(required);
+            }
+        }
+        if (!missing.isEmpty()) {
+            throw new InvalidFileException("CSV is missing required column(s): " + String.join(", ", missing));
+        }
+    }
+
+    private String getColumn(String[] columns, Map<String, Integer> headerIndex, String name) {
+        Integer i = headerIndex.get(name);
+        if (i == null || i >= columns.length) {
+            return "";
+        }
+        return sanitizeCsvField(columns[i].trim());
     }
 
     private void validateFile(MultipartFile file) {

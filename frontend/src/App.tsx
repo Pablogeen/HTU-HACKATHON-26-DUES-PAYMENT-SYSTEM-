@@ -11,6 +11,7 @@ import { MyTransactionsPage } from '@/pages/student/MyTransactionsPage';
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
 import { StudentsPage } from '@/pages/admin/StudentsPage';
 import { RegisterStudentPage } from '@/pages/admin/RegisterStudentPage';
+import { EditStudentPage } from '@/pages/admin/EditStudentPage';
 import { ImportStudentsPage } from '@/pages/admin/ImportStudentsPage';
 import { ReportsPage } from '@/pages/admin/ReportsPage';
 import { AdminTransactionsPage } from '@/pages/admin/AdminTransactionsPage';
@@ -50,6 +51,7 @@ export default function App() {
 
           <Route element={<ProtectedRoute roles={['PRESIDENT', 'ADMIN']} />}>
             <Route path="admin/students/register" element={<RegisterStudentPage />} />
+            <Route path="admin/students/:email/edit" element={<EditStudentPage />} />
           </Route>
 
           <Route element={<ProtectedRoute roles={['PRESIDENT', 'FINANCIAL_SECRETARY', 'ADMIN']} />}>
