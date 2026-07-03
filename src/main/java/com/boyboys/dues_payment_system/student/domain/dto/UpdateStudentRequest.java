@@ -27,7 +27,7 @@ public class UpdateStudentRequest {
     @NotBlank(message = "Academic year is required")
     private String academicYear;
 
-    @NotBlank(message = "Last name is required")
+    @NotNull(message = "Qualification name is required")
     private Qualification qualificationType;
 
     @NotNull(message = "Programme is required")
