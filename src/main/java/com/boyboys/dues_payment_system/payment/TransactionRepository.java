@@ -1,6 +1,7 @@
 package com.boyboys.dues_payment_system.payment;
 
 import com.boyboys.dues_payment_system.student.Programme;
+import com.boyboys.dues_payment_system.student.Student;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
@@ -43,4 +44,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
         t.status='SUCCESS' AND s.programme =:programme""")
     BigDecimal sumAmountByProgramme(@Param("programme") Programme programme);
 
+    void deleteByStudent(Student student);
 }

@@ -1,5 +1,6 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
+import com.boyboys.dues_payment_system.payment.TransactionRepository;
 import com.boyboys.dues_payment_system.student.*;
 import com.boyboys.dues_payment_system.student.domain.RefreshTokenRepository;
 import com.boyboys.dues_payment_system.student.domain.Role;
@@ -27,6 +28,7 @@ public class StudentService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final StudentCsvParser studentCsvParser;
     private final ModelMapper modelMapper;
+    private final TransactionRepository transactionRepository;
 
 
     @Transactional
@@ -102,7 +104,7 @@ public class StudentService {
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
         refreshTokenRepository.deleteByStudent(student);
         confirmationTokenRepository.deleteByStudent(student);
-
+        transactionRepository.deleteByStudent(student);
         studentRepository.delete(student);
     }
 
