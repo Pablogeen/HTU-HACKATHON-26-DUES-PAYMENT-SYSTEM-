@@ -1,6 +1,8 @@
 package com.boyboys.dues_payment_system.student;
 
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -39,4 +41,5 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     long countByProgrammeAndLevelAndPaymentStatus(Programme programme, Level level, PaymentStatus paymentStatus);
 
 
+    boolean existsByPhoneNumber(String phoneNumber);
 }

@@ -6,6 +6,7 @@ import com.boyboys.dues_payment_system.student.domain.RefreshTokenRepository;
 import com.boyboys.dues_payment_system.student.domain.Role;
 import com.boyboys.dues_payment_system.student.domain.dto.*;
 import com.boyboys.dues_payment_system.student.domain.exception.EmailAlreadyExistException;
+import com.boyboys.dues_payment_system.student.domain.exception.PhoneNumberAlreadyTakenException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,11 @@ public class StudentService {
         if(studentExist){
             throw new EmailAlreadyExistException("EMAIL ALREADY TAKEN");
         }
+        boolean phoneNumberExist = studentRepository.existsByPhoneNumber(request.getPhoneNumber());
+        if(phoneNumberExist){
+            throw new PhoneNumberAlreadyTakenException("PHONE NUMBER ALREADY TAKEN");
+        }
+
         Student student = new Student();
         student.setFirstName(request.getFirstName());
         student.setMiddleName(request.getMiddleName());
