@@ -44,7 +44,7 @@ public class TransactionService {
         log.info("Initializing payment for student: {}", email);
 
         //Pessemitic lock implementedto prevent race conditions
-        Student student = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
 
         if (transactionRepository.existsByStudentIdAndStatus(student.getId(), TransactionStatus.SUCCESS)) {
@@ -181,7 +181,7 @@ public class TransactionService {
 
     public List<TransactionResponse> getStudentTransactions(String email) {
         //Pessimistic locks implemented here
-        Student student = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
         return transactionRepository.findByStudentId(student.getId())
                 .stream()

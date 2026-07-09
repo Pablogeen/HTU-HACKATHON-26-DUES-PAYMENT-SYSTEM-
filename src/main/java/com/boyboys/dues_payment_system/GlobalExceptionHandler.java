@@ -82,7 +82,7 @@ public class GlobalExceptionHandler {
         log.error("User not found exception");
         ErrorDetails details = new ErrorDetails(
                 e.getMessage(),
-                "USER NOT FOUND",
+                "STUDENT NOT FOUND",
                 request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);

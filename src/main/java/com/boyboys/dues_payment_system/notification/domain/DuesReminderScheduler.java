@@ -22,7 +22,7 @@ public class DuesReminderScheduler {
 
     @Scheduled(cron = "0 0 9 1 * *") // 9AM on the 1st of every month
     public void sendMonthlyDuesReminders() {
-        List<Student> unpaidStudents = studentRepository.findAllByPaymentStatus(PaymentStatus.UNPAID);
+        List<Student> unpaidStudents = studentRepository.findAllByPaymentStatusAndIsDeletedFalse(PaymentStatus.UNPAID);
         for (Student student : unpaidStudents) {
             eventPublisher.publishEvent(new DuesReminderEvent(student.getEmail(), student.getFirstName()));
         }

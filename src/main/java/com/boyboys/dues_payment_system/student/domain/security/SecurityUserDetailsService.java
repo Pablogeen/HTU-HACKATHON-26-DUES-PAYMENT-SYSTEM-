@@ -16,7 +16,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws StudentNotFoundException {
-        Student student = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("STUDENT NOT FOUND"));
         return new SecurityUserDetails(student);
     }
