@@ -37,7 +37,6 @@ This module handles events published by other modules and send notifications to 
 
 ## Prerequisites
 * JDK 21+
-* Docker and Docker Compose
 * Your favourite IDE (Recommended: [IntelliJ IDEA](https://www.jetbrains.com/idea/))
 
 ## Branches
@@ -49,5 +48,8 @@ This module handles events published by other modules and send notifications to 
 * **Frontend**: https://payment-system-ten-chi.vercel.app
 * **Backend Api Docs** https://htu-hackathon-26-dues-payment-system.onrender.com/swagger-ui.html
 
+[Frontend Docs](frontend/README.md)
+
 [Architecture-Design-Record(ADR)](docs/Architecture-Design-Records(ADR).md)
+
 

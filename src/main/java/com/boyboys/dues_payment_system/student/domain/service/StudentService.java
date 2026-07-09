@@ -1,13 +1,12 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
-import com.boyboys.dues_payment_system.student.Programme;
+import com.boyboys.dues_payment_system.payment.TransactionRepository;
+import com.boyboys.dues_payment_system.student.*;
+import com.boyboys.dues_payment_system.student.domain.RefreshTokenRepository;
 import com.boyboys.dues_payment_system.student.domain.Role;
-import com.boyboys.dues_payment_system.student.Student;
-import com.boyboys.dues_payment_system.student.PaymentStatus;
-import com.boyboys.dues_payment_system.student.StudentRepository;
 import com.boyboys.dues_payment_system.student.domain.dto.*;
 import com.boyboys.dues_payment_system.student.domain.exception.EmailAlreadyExistException;
-import com.boyboys.dues_payment_system.student.StudentNotFoundException;
+import com.boyboys.dues_payment_system.student.domain.exception.PhoneNumberAlreadyTakenException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,11 @@ import java.util.List;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final StudentCsvParser studentCsvParser;
     private final ModelMapper modelMapper;
+    private final TransactionRepository transactionRepository;
 
 
     @Transactional
@@ -57,18 +59,24 @@ public class StudentService {
         return summary;
     }
 
-    public List<StudentResponse> getAllStudents(Pageable pageable) {
-        return studentRepository.findAll(pageable).stream()
+    public List<StudentResponse> getAllStudentsIsDeletedFalse(Pageable pageable) {
+        return studentRepository.findByIsDeletedFalse(pageable).stream()
                 .map(user -> modelMapper.map(user, StudentResponse.class))
                 .toList();
     }
 
+    @Transactional
     public StudentResponse registerStudent(@Valid RegisterRequest request) {
         log.info("Request made to register student");
         boolean studentExist = studentRepository.existsByEmail(request.getEmail());
         if(studentExist){
             throw new EmailAlreadyExistException("EMAIL ALREADY TAKEN");
         }
+        boolean phoneNumberExist = studentRepository.existsByPhoneNumber(request.getPhoneNumber());
+        if(phoneNumberExist){
+            throw new PhoneNumberAlreadyTakenException("PHONE NUMBER ALREADY TAKEN");
+        }
+
         Student student = new Student();
         student.setFirstName(request.getFirstName());
         student.setMiddleName(request.getMiddleName());
@@ -89,23 +97,26 @@ public class StudentService {
 
     @Transactional
     public StudentResponse updateStudent(String email, UpdateStudentRequest request) {
-        Student student = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
-   Student mappedStudent = modelMapper.map(request, Student.class);
-        studentRepository.save(mappedStudent);
+        modelMapper.map(request, student);
+        Student savedStudent = studentRepository.save(student);
         log.info("Student details updated");
-        return modelMapper.map(student, StudentResponse.class);
+        return modelMapper.map(savedStudent, StudentResponse.class);
     }
 
     @Transactional
     public void deleteStudent(String email) {
-        Student user = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
-        studentRepository.delete(user);
+        student.setIsDeleted(true);
+        studentRepository.save(student);
+        log.info("Student with email {} soft deleted",email);
+
     }
 
     public StudentResponse getMe(String email) {
-        Student user = studentRepository.findByEmail(email)
+        Student user = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
         return modelMapper.map(user, StudentResponse.class);
     }
@@ -113,7 +124,7 @@ public class StudentService {
     @Transactional
     public StudentResponse assignRole(String email) {
         log.info("About to assign role to: {}",email);
-        Student student = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
         log.info("Student gotten from the db");
         student.setRole(Role.FINANCIAL_SECRETARY);
@@ -126,7 +137,7 @@ public class StudentService {
     @Transactional
     public StudentResponse revokeRole(String email) {
         log.info("About to revoke role of: {}",email);
-        Student student = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
         log.info("Student info gotten from the db");
         student.setRole(Role.STUDENT);
@@ -137,7 +148,7 @@ public class StudentService {
 
     @Transactional
     public StudentResponse getStudentByEmail(String email) {
-        Student student = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("Student not found"));
         log.info("Student found in the db");
         return modelMapper.map(student, StudentResponse.class);
@@ -145,22 +156,22 @@ public class StudentService {
     }
 
     @Transactional
-    public List<StudentResponse> getStudentsByPaymentStatus(String paymentStatus, Pageable pageable) {
-        return studentRepository.findByPaymentStatus(PaymentStatus.valueOf(paymentStatus), pageable)
+    public List<StudentResponse> getStudentsByPaymentStatusAndIsDeletedFalse(String paymentStatus, Pageable pageable) {
+        return studentRepository.findByPaymentStatusAndIsDeletedFalse(PaymentStatus.valueOf(paymentStatus), pageable)
                 .stream()
                 .map(student -> modelMapper.map(student, StudentResponse.class))
                 .toList();
     }
 
     @Transactional
-    public List<StudentResponse> getStudentsByProgramme(Programme programme, Pageable pageable) {
-        return studentRepository.findByProgramme(programme, pageable)
+    public List<StudentResponse> getStudentsByProgrammeAndsDeletedFalse(Programme programme, Pageable pageable) {
+        return studentRepository.findByProgrammeAndIsDeletedFalse(programme, pageable)
                 .stream().map(student -> modelMapper.map(student, StudentResponse.class)).toList();
     }
 
     @Transactional
-    public List<StudentResponse> getStudentsByProgrammeAndPaymentStatus(Programme programme, PaymentStatus paymentStatus, Pageable pageable) {
-        return studentRepository.findByProgrammeAndPaymentStatus(programme, paymentStatus, pageable)
+    public List<StudentResponse> getStudentsByProgrammeAndPaymentStatusAndIsDeletedFalse(Programme programme, PaymentStatus paymentStatus, Pageable pageable) {
+        return studentRepository.findByProgrammeAndPaymentStatusAndIsDeletedFalse(programme, paymentStatus, pageable)
                 .stream().map(student -> modelMapper.map(student, StudentResponse.class)).toList();
     }
 }

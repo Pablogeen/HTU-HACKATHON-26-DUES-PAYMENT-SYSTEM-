@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,7 +38,7 @@ public class StudentController {
             summary = "Import Students",
             description = "Allows the importation of students using a .csv file")
     @PostMapping("/import")
-    @PreAuthorize("hasAnyAuthority('PRESIDENT','FINANCIAL_SECRETARY','ADMIN')")
+    @PreAuthorize("hasAnyAuthority('PRESIDENT','ADMIN')")
     public ResponseEntity<ImportSummary> importStudents(@RequestParam("file") MultipartFile file) {
         log.info("Request made to import students into the db");
         ImportSummary summary = studentService.importStudents(file);
@@ -69,7 +68,7 @@ public class StudentController {
                                                             @RequestParam(defaultValue = "10") int size) {
         log.info("Request made to view all students");
         Pageable pageable = PageRequest.of(page, size);
-        List<StudentResponse> users = studentService.getAllStudents(pageable);
+        List<StudentResponse> users = studentService.getAllStudentsIsDeletedFalse(pageable);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
@@ -151,7 +150,7 @@ public class StudentController {
                             @RequestParam(defaultValue = "10") int size) {
         log.info("Getting students by payment status: {}", paymentStatus);
         Pageable pageable = PageRequest.of(page, size);
-        List<StudentResponse> students = studentService.getStudentsByPaymentStatus(paymentStatus,pageable);
+        List<StudentResponse> students = studentService.getStudentsByPaymentStatusAndIsDeletedFalse(paymentStatus,pageable);
         log.info("Students gotten by payment status: {}", students.size());
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
@@ -168,7 +167,7 @@ public class StudentController {
                                 @RequestParam(defaultValue = "10") int size) {
         log.info("Getting students by programme: {}", programme);
         Pageable pageable = PageRequest.of(page, size);
-        List<StudentResponse> students = studentService.getStudentsByProgramme(programme,pageable);
+        List<StudentResponse> students = studentService.getStudentsByProgrammeAndsDeletedFalse(programme,pageable);
         log.info("Students gotten by programme: {}", students.size());
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
@@ -186,7 +185,7 @@ public class StudentController {
                                     @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         log.info("Getting students by programme: {} and payment status: {}", programme, paymentStatus);
-        List<StudentResponse> students = studentService.getStudentsByProgrammeAndPaymentStatus(programme, paymentStatus,pageable);
+        List<StudentResponse> students = studentService.getStudentsByProgrammeAndPaymentStatusAndIsDeletedFalse(programme, paymentStatus,pageable);
         log.info("Students gotten: {}", students.size());
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
