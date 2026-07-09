@@ -5,6 +5,8 @@ import com.boyboys.dues_payment_system.student.domain.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
+import static java.lang.Boolean.FALSE;
+
 @Entity
 @Getter
 @Setter
@@ -39,6 +41,7 @@ public class Student {
     @Enumerated(EnumType.STRING)
     @Column(name = "programme", nullable = false)
     private Programme programme;
+    private Boolean isDeleted = FALSE;
 
 
 

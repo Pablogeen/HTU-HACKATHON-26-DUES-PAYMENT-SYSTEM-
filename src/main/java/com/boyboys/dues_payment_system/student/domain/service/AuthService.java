@@ -38,7 +38,7 @@ public class AuthService {
 
     @Transactional
     public String login(LoginRequest request) {
-            Student student = studentRepository.findByEmail(request.getEmail())
+            Student student = studentRepository.findByEmailAndIsDeletedFalse(request.getEmail())
                     .orElseThrow(() -> new StudentNotFoundException("No account found with this email"));
             log.info("Gotten the user from the db");
 
@@ -62,7 +62,7 @@ public class AuthService {
     @Transactional
     public AuthResponse verify(ConfirmationTokenRequest request) {
 
-            Student student = studentRepository.findByEmail(request.getEmail())
+            Student student = studentRepository.findByEmailAndIsDeletedFalse(request.getEmail())
                     .orElseThrow(() -> new StudentNotFoundException("NO ACCOUNT FOUND WITH THIS STUDENT EMAIL"));
 
             ConfirmationToken confirmationToken = tokenService.getToken(request.getToken())
@@ -111,7 +111,7 @@ public class AuthService {
     public String resendVerificationToken(String email) {
         log.info("About to make cal to resend token");
 
-        Student student = studentRepository.findByEmail(email)
+        Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                 .orElseThrow(() -> new StudentNotFoundException("STUDENT NOT FOUND"));
 
         confirmationTokenRepository.findActiveTokenByStudentId(student.getId(), LocalDateTime.now())
