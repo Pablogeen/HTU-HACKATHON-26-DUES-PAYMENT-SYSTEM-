@@ -1,5 +1,6 @@
 package com.boyboys.dues_payment_system.reports.domain;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record ProgrammeDetailSummaryResponse(
@@ -7,6 +8,6 @@ public record ProgrammeDetailSummaryResponse(
         long totalStudents,
         long totalPaid,
         long totalUnpaid,
-        long totalAmountCollectedInCedis,
+        BigDecimal totalAmountCollectedInCedis,
         List<LevelSummary> levelSummaries
 ) {}

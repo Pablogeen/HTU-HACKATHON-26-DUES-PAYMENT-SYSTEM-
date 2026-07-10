@@ -1,5 +1,7 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
+import com.boyboys.dues_payment_system.audit.AuditAction;
+import com.boyboys.dues_payment_system.audit.AuditEvent;
 import com.boyboys.dues_payment_system.payment.TransactionRepository;
 import com.boyboys.dues_payment_system.student.*;
 import com.boyboys.dues_payment_system.student.domain.RefreshTokenRepository;
@@ -12,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,15 +28,13 @@ import java.util.List;
 public class StudentService {
 
     private final StudentRepository studentRepository;
-    private final ConfirmationTokenRepository confirmationTokenRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
     private final StudentCsvParser studentCsvParser;
     private final ModelMapper modelMapper;
-    private final TransactionRepository transactionRepository;
-
+    private final ApplicationEventPublisher eventPublisher;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public ImportSummary importStudents(MultipartFile file) {
+    public ImportSummary importStudents(MultipartFile file, Student currentStudent) {
         CsvParseResult parseResult = studentCsvParser.parse(file);
 
         int successCount = 0;
@@ -72,7 +73,7 @@ public class StudentService {
         if(studentExist){
             throw new EmailAlreadyExistException("EMAIL ALREADY TAKEN");
         }
-        boolean phoneNumberExist = studentRepository.existsByPhoneNumber(request.getPhoneNumber());
+        boolean phoneNumberExist = studentRepository.existsByPhoneNumberAndIsDeletedFalse(request.getPhoneNumber());
         if(phoneNumberExist){
             throw new PhoneNumberAlreadyTakenException("PHONE NUMBER ALREADY TAKEN");
         }
@@ -108,11 +109,11 @@ public class StudentService {
     @Transactional
     public void deleteStudent(String email) {
         Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
-                .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+                              .orElseThrow(() -> new StudentNotFoundException("Student not found"));
         student.setIsDeleted(true);
         studentRepository.save(student);
+        refreshTokenRepository.revokeAllStudentTokens(student.getId());
         log.info("Student with email {} soft deleted",email);
-
     }
 
     public StudentResponse getMe(String email) {

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +38,7 @@ public class ReportService {
                         studentRepository.countByProgramme(programme),
                         studentRepository.countByProgrammeAndPaymentStatus(programme, PaymentStatus.PAID),
                         studentRepository.countByProgrammeAndPaymentStatus(programme, PaymentStatus.UNPAID),
-                        transactionRepository.sumAmountByProgramme(programme)
+                        Objects.requireNonNullElse(transactionRepository.sumPaidTransactionsByProgramme(programme), BigDecimal.ZERO).divide(BigDecimal.valueOf(100))
                 ))
                 .toList();
 
@@ -67,8 +68,9 @@ public class ReportService {
         long totalStudents = studentRepository.countByProgramme(programme);
         long totalPaid = studentRepository.countByProgrammeAndPaymentStatus(programme, PaymentStatus.PAID);
         long totalUnpaid = studentRepository.countByProgrammeAndPaymentStatus(programme, PaymentStatus.UNPAID);
-        Long totalAmountInPesewas = transactionRepository.sumPaidTransactionsByProgramme(programme);
-        long totalAmountInCedis = totalAmountInPesewas != null ? totalAmountInPesewas / 100 : 0;
+        BigDecimal totalAmountInCedis = Objects.requireNonNullElse(transactionRepository.sumPaidTransactionsByProgramme(programme), BigDecimal.ZERO)
+                                                    .divide(BigDecimal.valueOf(100));
+
 
         List<LevelSummary> levelSummaries = Arrays.stream(Level.values())
                 .map(level -> new LevelSummary(

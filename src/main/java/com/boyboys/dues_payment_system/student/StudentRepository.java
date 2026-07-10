@@ -25,7 +25,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
         List<Student> findAllByPaymentStatusAndIsDeletedFalse(PaymentStatus paymentStatus);
 
         boolean existsByEmail(String email);
-        boolean existsByPhoneNumber(String phoneNumber);
+        boolean existsByPhoneNumberAndIsDeletedFalse(String phoneNumber);
 
         long countByProgramme(Programme programme);
         long countByProgrammeAndPaymentStatus(Programme programme, PaymentStatus paymentStatus);
