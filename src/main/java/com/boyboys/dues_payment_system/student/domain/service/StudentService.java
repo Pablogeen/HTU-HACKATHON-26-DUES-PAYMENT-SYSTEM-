@@ -1,8 +1,5 @@
 package com.boyboys.dues_payment_system.student.domain.service;
 
-import com.boyboys.dues_payment_system.audit.AuditAction;
-import com.boyboys.dues_payment_system.audit.AuditEvent;
-import com.boyboys.dues_payment_system.payment.TransactionRepository;
 import com.boyboys.dues_payment_system.student.*;
 import com.boyboys.dues_payment_system.student.domain.RefreshTokenRepository;
 import com.boyboys.dues_payment_system.student.domain.Role;
@@ -34,7 +31,7 @@ public class StudentService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
-    public ImportSummary importStudents(MultipartFile file, Student currentStudent) {
+    public ImportSummary importStudents(MultipartFile file) {
         CsvParseResult parseResult = studentCsvParser.parse(file);
 
         int successCount = 0;
@@ -94,6 +91,7 @@ public class StudentService {
         Student savedStudent = studentRepository.save(student);
         log.info("Student saved into the db");
         return modelMapper.map(savedStudent, StudentResponse.class);
+
     }
 
     @Transactional
@@ -104,6 +102,7 @@ public class StudentService {
         Student savedStudent = studentRepository.save(student);
         log.info("Student details updated");
         return modelMapper.map(savedStudent, StudentResponse.class);
+
     }
 
     @Transactional
