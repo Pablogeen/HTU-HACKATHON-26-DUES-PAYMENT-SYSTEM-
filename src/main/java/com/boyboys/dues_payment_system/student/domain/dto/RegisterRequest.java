@@ -13,19 +13,17 @@ import lombok.Data;
 public class RegisterRequest {
 
     @NotBlank(message = "First name is required")
-    @Pattern(regexp = "^[a-zA-Z\\s]+$",message = "Invalid Middle Name")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$",message = "Invalid First Name")
     private String firstName;
 
     @Pattern(regexp = "^[a-zA-Z\\s]+$",message = "Invalid Middle name")
-
     private String middleName;
 
     @NotBlank(message = "Last name is required")
-    @Pattern(regexp = "^[a-zA-Z\\s]+$",message = "Invalid Middle Name")
-
+    @Pattern(regexp = "^[a-zA-Z\\s]+$",message = "Invalid Last Name")
     private String lastName;
 
-    @NotBlank(message = "Last name is required")
+    @NotBlank(message = "Email is required")
     @Email(message = "Enter a valid email")
     private String email;
 

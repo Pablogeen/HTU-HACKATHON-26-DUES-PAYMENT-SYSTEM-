@@ -41,6 +41,8 @@ public class Student {
     @Enumerated(EnumType.STRING)
     @Column(name = "programme", nullable = false)
     private Programme programme;
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
     private Boolean isDeleted = FALSE;
 
 
