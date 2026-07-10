@@ -1,0 +1,15 @@
+package com.boyboys.dues_payment_system.audit;
+
+public enum AuditAction {
+    STUDENT_CREATED,
+    STUDENT_UPDATED,
+    STUDENT_DELETED,
+    STUDENT_ROLE_ASSIGNED,
+    STUDENT_ROLE_REVOKED,
+    STUDENT_IMPORTED,
+    PAYMENT_INITIALIZED,
+    PAYMENT_SUCCESS,
+    PAYMENT_FAILED,
+    REPORT_DOWNLOADED,
+    RECEIPT_DOWNLOADED
+}
