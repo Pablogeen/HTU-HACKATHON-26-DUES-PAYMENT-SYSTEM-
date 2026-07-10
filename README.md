@@ -6,7 +6,7 @@ platform for student associations - enabling members to pay, admins to manage re
 to generate reports
 
 
-![high-level-design.png](docs/high-level-design.png)
+![high-level-design(HLD).png](docs/high-level-design(HLD).excalidraw.png)
 
 # MODULES
 
