@@ -1,4 +1,4 @@
-package com.boyboys.dues_payment_system.audit.domain;
+package com.boyboys.dues_payment_system.audit;
 
 public enum AuditAction {
     STUDENT_CREATED,
