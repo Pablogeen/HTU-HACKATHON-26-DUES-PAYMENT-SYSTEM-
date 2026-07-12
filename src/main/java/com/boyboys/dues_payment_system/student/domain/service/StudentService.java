@@ -6,6 +6,7 @@ import com.boyboys.dues_payment_system.student.domain.Role;
 import com.boyboys.dues_payment_system.student.domain.dto.*;
 import com.boyboys.dues_payment_system.student.domain.exception.EmailAlreadyExistException;
 import com.boyboys.dues_payment_system.student.domain.exception.PhoneNumberAlreadyTakenException;
+import com.boyboys.dues_payment_system.student.domain.exception.StudentAlreadyDeletedException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -109,6 +110,12 @@ public class StudentService {
     public void deleteStudent(String email) {
         Student student = studentRepository.findByEmailAndIsDeletedFalse(email)
                               .orElseThrow(() -> new StudentNotFoundException("Student not found"));
+
+        if(student.getIsDeleted()){
+            throw new StudentAlreadyDeletedException("STUDENT ALREADY DELETED");
+        }
+        student.setEmail(student.getEmail()+"_deleted_"+student.getId());
+        student.setPhoneNumber(student.getPhoneNumber()+"_deleted_"+student.getId());
         student.setIsDeleted(true);
         studentRepository.save(student);
         refreshTokenRepository.revokeAllStudentTokens(student.getId());

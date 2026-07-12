@@ -137,6 +137,18 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(StudentAlreadyDeletedException.class)
+    public ResponseEntity<?> tokenExpiredException(StudentAlreadyDeletedException e, WebRequest request) {
+        log.error("Student already deleted Exception");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "STUDENT HAS ALREADY BEEN DELETED",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+
+    }
+
     @ExceptionHandler(RateLimitException.class)
     public ResponseEntity<?> handleRateLimit(RateLimitException ex, WebRequest request) {
         log.error("Rate limit exception");
