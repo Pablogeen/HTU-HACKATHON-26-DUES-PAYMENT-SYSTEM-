@@ -39,7 +39,7 @@ public class StudentService {
         List<String> skippedReasons = new ArrayList<>(parseResult.getSkippedReasons());
 
         for (Student student : parseResult.getValidUsers()) {
-            if (studentRepository.existsByEmail((student.getEmail()))) {
+            if (studentRepository.existsByEmailAndIsDeletedFalse((student.getEmail()))) {
                 skippedCount++;
                 skippedReasons.add("Skipped: Email already exists - " + student.getEmail());
                 continue;
@@ -66,7 +66,7 @@ public class StudentService {
     @Transactional
     public StudentResponse registerStudent(@Valid RegisterRequest request) {
         log.info("Request made to register student");
-        boolean studentExist = studentRepository.existsByEmail(request.getEmail());
+        boolean studentExist = studentRepository.existsByEmailAndIsDeletedFalse(request.getEmail());
         if(studentExist){
             throw new EmailAlreadyExistException("EMAIL ALREADY TAKEN");
         }
