@@ -24,7 +24,7 @@ public class Student {
     private String lastName;
     @Column(name = "middle_name", length = 50)
     private String middleName;
-    @Column(name = "email", length = 50)
+    @Column(name = "email", length = 100)
     private String email;
     @Column(name = "phone_number", length = 50)
     private String phoneNumber;
