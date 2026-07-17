@@ -146,7 +146,7 @@ public class AuthService {
         }
 
         Student student = refreshToken.getStudent();
-        log.info("Gotten refresh token");
+        log.info("Gotten refresh token owner");
 
         refreshToken.setRevoked(true);
         refreshTokenRepository.save(refreshToken);
